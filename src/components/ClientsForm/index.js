@@ -33,6 +33,9 @@ export default function ClientsForm() {
                         <input type="text" maxLength={11} />
                     </div>
                 </div>
+                <div className="itemClients">
+                    <button>Cadastrar</button>
+                </div> 
             </div>
         </form>
     );

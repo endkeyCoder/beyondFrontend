@@ -28,12 +28,14 @@ export default function DrawerMenu({ stateDrawer }) {
                     onKeyDown={(evt) => toggleDrawer(evt)}
                 >
                     <List>
-                        {['Produtos', 'Clientes', 'Terapeutas', 'Agendamentos'].map((text, index) => (
-                            <ListItem button key={text}>
-
-                                <a href="/products"><ListItemText primary={text} /></a>
-                            </ListItem>
-                        ))}
+                        {['Produtos', 'Clientes', 'Terapeutas', 'Agendamentos'].map((text, index) => {
+                            const links = ['products', 'clients', 'sallers', 'schedules']
+                            return (
+                                <ListItem button key={text}>
+                                    <a href={links[index]}><ListItemText primary={text} /></a>
+                                </ListItem>
+                            )
+                        })}
                     </List>
                     <Divider />
                     <List>
