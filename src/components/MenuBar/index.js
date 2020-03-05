@@ -30,13 +30,13 @@ export default function MenuBar(props) {
   })
 
   const toggleDrawer = (event) => {
-    
+
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-        return;
+      return;
     }
 
     setshowDrawer({ ...showDrawer, show: !showDrawer.show })
-}
+  }
 
   return (
     <div className={classes.root}>
@@ -46,12 +46,12 @@ export default function MenuBar(props) {
             <MenuIcon onClick={(evt) => toggleDrawer(evt)} />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            Quality of Life
+            <a href="/">Quality of Life</a>
           </Typography>
           <Button color="inherit">Login</Button>
         </Toolbar>
       </AppBar>
-      <DrawerMenu stateDrawer={{showDrawer, setshowDrawer}} />
+      <DrawerMenu stateDrawer={{ showDrawer, setshowDrawer }} />
     </div>
   );
 }

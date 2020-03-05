@@ -1,10 +1,20 @@
 import React, { useState } from 'react';
 import apiBeyond from '../../config/apiBeyond';
+import { useSelector, useDispatch } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import './styles.css';
 
 export default function SigninForm() {
     const [user, setUser] = useState('');
     const [password, setPassword] = useState('')
+
+    const dispatch = useDispatch();
+    const userSession = useSelector(state => {
+        return state.userSession.infoUser;
+    })
+
+    console.log(userSession)
+
     async function login(e) {
         e.preventDefault();
         try {
@@ -13,15 +23,29 @@ export default function SigninForm() {
             })
 
             if (res.data.authenticate) {
-                window.location.href = '/';
-            }else{
+
+                await recordSession(res.data)
+                alert('login realizado com sucesso')
+                return (
+                    <Redirect to={{
+                        pathname: "/"
+                    }} />
+                )
+            } else {
                 alert(res.data.message)
             }
         } catch (error) {
             alert('problema ao realizar login')
             console.log(error)
         }
+    }
 
+    async function recordSession(dataUser) {
+        const { name, user, email, token } = dataUser
+        dispatch({
+            type: 'OPEN_SESSION',
+            infoUser: { name, user, email, token }
+        })
     }
 
     function handleUser(user) {

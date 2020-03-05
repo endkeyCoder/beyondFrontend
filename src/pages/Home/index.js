@@ -1,23 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import Menu from '../../components/MenuBar';
 // import { Container } from './styles';
 
 export default function Home() {
-
-    const product = {
-        description: '',
-        price: '',
-        photo: '',
-    }
-
-    const ProductContext = React.createContext(product)
+    const userSession = useSelector(state => {
+        return state.userSession.infoUser;
+    })
+    useEffect(() => {
+        console.log(userSession)
+    })
 
     return (
-        <>
-            <ProductContext.Provider value={product}>
-                <Menu />
-            </ProductContext.Provider>
-
-        </>
+        <Menu />
     );
 }

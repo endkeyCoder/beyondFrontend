@@ -1,12 +1,12 @@
 import { Drawer, List, Divider, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 
-import React, { useContext } from 'react';
+import React from 'react';
+
 
 import './styles.css';
 
 export default function DrawerMenu({ stateDrawer }) {
     const { showDrawer, setshowDrawer } = stateDrawer;
-
 
     const toggleDrawer = (event) => {
 
@@ -16,6 +16,10 @@ export default function DrawerMenu({ stateDrawer }) {
         }
 
         setshowDrawer({ ...showDrawer, show: !showDrawer.show })
+    }
+
+    function logout() {
+        sessionStorage.removeItem('sessionUser')
     }
 
     return (
@@ -39,11 +43,12 @@ export default function DrawerMenu({ stateDrawer }) {
                     </List>
                     <Divider />
                     <List>
-                        {['Configurações', 'Logout'].map((text, index) => (
-                            <ListItem button key={text}>
-                                <ListItemText primary={text} />
-                            </ListItem>
-                        ))}
+                        <ListItem button>
+                            <ListItemText primary="Configurações" />
+                        </ListItem>
+                        <ListItem button>
+                            <ListItemText primary="Logout" />
+                        </ListItem>
                     </List>
                 </div>
             </Drawer>
