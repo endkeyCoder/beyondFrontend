@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import apiBeyond from '../../config/apiBeyond';
+import { Link } from 'react-router-dom';
 
 import './styles.css';
 
@@ -114,7 +115,7 @@ export default function RegisterUserForm() {
                     <button type="submit">Cadastrar</button>
                 </div>
                 <div className="itemRegisterUserForm">
-                    <a href="/signin">Voltar ao login</a>
+                    <Link to={{pathname: 'signin'}}>Voltar ao login</Link>
                 </div>
             </div>
         </form>

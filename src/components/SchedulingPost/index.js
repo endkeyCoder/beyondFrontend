@@ -209,7 +209,7 @@ export default function SchedulingPost() {
             if (resScheduling.data.message.statusCode == 200) {
                 dispatch(setScheduling(resScheduling.data.data))
             }
-            alert(resScheduling.data.messageClient.observation);
+            alert(resScheduling.data.message.observation);
         } catch (error) {
             console.log('print de error em handleSubmitScheduling => ', error);
             alert('ocorreu algum problema ao tentar gravar o agendamento')
