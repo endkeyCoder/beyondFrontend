@@ -3,9 +3,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import { Link } from 'react-router-dom';
 
 import DrawerMenu from '../DrawerMenu';
 
@@ -22,7 +22,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function MenuBar(props) {
-  console.log(props)
   const classes = useStyles();
 
   const [showDrawer, setshowDrawer] = useState({
@@ -30,13 +29,14 @@ export default function MenuBar(props) {
   })
 
   const toggleDrawer = (event) => {
-    
+
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-        return;
+      console.log('print de toggleDrawer em MenuBar => ', event.type);
+      return;
     }
 
     setshowDrawer({ ...showDrawer, show: !showDrawer.show })
-}
+  }
 
   return (
     <div className={classes.root}>
@@ -46,12 +46,11 @@ export default function MenuBar(props) {
             <MenuIcon onClick={(evt) => toggleDrawer(evt)} />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            Quality of Life
+            <Link to={{ pathname: "/" }}>Beyond System</Link>
           </Typography>
-          <Button color="inherit">Login</Button>
         </Toolbar>
       </AppBar>
-      <DrawerMenu stateDrawer={{showDrawer, setshowDrawer}} />
+      <DrawerMenu stateDrawer={{ showDrawer, setshowDrawer }} />
     </div>
   );
 }

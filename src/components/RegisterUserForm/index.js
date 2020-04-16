@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import apiBeyond from '../../config/apiBeyond';
 
 import './styles.css';
@@ -9,6 +9,8 @@ export default function RegisterUserForm() {
     const [confirmPassword, setConfirmPassword] = useState('')
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+    const [groups, setGroups] = useState([]);
+    const [idGroup, setIdGroup] = useState(1)
 
     function handleNick(nick) {
         setNick(nick)
@@ -25,20 +27,24 @@ export default function RegisterUserForm() {
     function handleConfirmPassword(confirmPassword) {
         setConfirmPassword(confirmPassword)
     }
+    function handleIdGroup(idGroup) {
+        setIdGroup(idGroup)
+    }
     async function register(e) {
         e.preventDefault();
         if (password === confirmPassword) {
             try {
                 const res = await apiBeyond.post('/setUser', {
-                    user: nick,
+                    nick,
                     password,
                     name,
                     email,
                     status: 'pendente',
-                    group: 'vendedores'
+                    block: true,
+                    groupId: idGroup
                 })
-                console.log(res.data);
-                alert('cadastro realizado com suceso')
+
+                alert(res.data.message.observation);
             } catch (error) {
                 console.log(error)
                 alert('problema ao tentar efetuar o cadastro')
@@ -48,6 +54,21 @@ export default function RegisterUserForm() {
         }
     }
 
+    useEffect(() => {
+        async function loadGroups() {
+            try {
+                const resLoadGroups = await apiBeyond.get('/getAllUserGroups')
+                if (resLoadGroups.data.data.length !== groups.length) {
+                    setGroups(resLoadGroups.data.data)
+                }
+            } catch (error) {
+                console.log('print de error em loadGroups => ', error)
+                alert('problema ao carregar os grupos')
+            }
+        }
+        loadGroups();
+    })
+    console.log('print de idGroup em RegisterUserForm => ', idGroup)
     return (
         <form className="formRegisterUser" onSubmit={register}>
             <div className="headerRegisterUserForm">
@@ -73,6 +94,19 @@ export default function RegisterUserForm() {
                 <div className="itemRegisterUserForm">
                     <label>Email</label>
                     <input onChange={(e) => handleEmail(e.target.value)} type="email" required />
+                </div>
+                <div className="itemRegisterUserForm">
+                    <label>Grupo do Usuário</label>
+                    <select onChange={(e) => handleIdGroup(e.target.value)}>
+                        {
+                            groups.map(group => {
+                                const { name, id } = group;
+                                return (
+                                    <option key={name + id} value={id}>{name}</option>
+                                )
+                            })
+                        }
+                    </select>
                 </div>
             </div>
             <div className="footerRegisterUserForm">
