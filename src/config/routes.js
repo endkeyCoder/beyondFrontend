@@ -42,7 +42,7 @@ const Routes = (props) => {
                 <PrivateRoute exact path="/" component={Home} />
                 <Route path="/signin" component={Signin} />
                 <PrivateRoute path="/users" component={RegisterUser} />
-                <Route path="/schedulings" component={Schedulings} />
+                <PrivateRoute path="/schedulings" component={Schedulings} />
                 <PrivateRoute path="/usergroups" component={UserGroups} />
                 <Route path="/tests" component={Tests} />
                 <Route path="*" component={() => (<><MenuBar /><h1>404 ERROR NOT FOUND <br /> Página não encontrada</h1></>)} />
