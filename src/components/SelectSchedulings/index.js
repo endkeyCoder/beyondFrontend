@@ -61,7 +61,7 @@ export default function SelectSchedulings() {
         { title: 'Endereço', field: 'address' },
         { title: 'Profissão', field: 'profession' },
         { title: 'Ponto de referência', field: 'referencePoint' },
-        { title: 'Link do maps', field: 'linkMaps' },
+        { title: 'Link do maps', field: 'linkMaps', type: 'url' },
         { title: 'Observação', field: 'observation' },
         { title: 'Destinatário', field: 'externalUserName' }
     ]
@@ -90,6 +90,9 @@ export default function SelectSchedulings() {
             columns={columns}
             data={schedulings}
             emptyValue="Nenhum agendamento encontrado"
+            options={{
+                exportCsv: (columns, schedulings)
+            }}
         />
     );
 }

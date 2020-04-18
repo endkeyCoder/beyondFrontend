@@ -345,6 +345,9 @@ export default function SchedulingPost() {
                     label="Endereço"
                     value={address}
                     onChange={e => handleAddress(e.target.value)}
+                    rowsMax={15}
+                    size="large"
+                    multiline
                     required
                 />
                 <TextField
