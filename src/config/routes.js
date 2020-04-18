@@ -35,7 +35,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
     )
 }
 
-const Routes = (props) => {
+const Routes = () => {
     return (
         < BrowserRouter >
             <Switch>

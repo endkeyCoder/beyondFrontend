@@ -96,7 +96,7 @@ export default function SchedulingPost() {
     const [city, setCity] = useState('');
     const [client, setClient] = useState('');
     const [ageClient, setAgeClient] = useState(0);
-    const [civilState, setCivilState] = useState('single');
+    const [civilState, setCivilState] = useState('solteiro(a)');
     const [spouse, setSpouse] = useState('');
     const [ageSpouse, setAgeSpouse] = useState(0);
     const [telephone, setTelephone] = useState('');
