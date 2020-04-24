@@ -7,7 +7,9 @@ import Home from '../pages/Home';
 import Signin from '../pages/Signin';
 import RegisterUser from '../pages/RegisterUser';
 import Schedulings from '../pages/Schedulings';
-import UserGroups from '../pages/UserGroups'
+import UserGroups from '../pages/UserGroups';
+import Schedule from '../pages/Schedule';
+import GeneralSettings from '../pages/GeneralSettings';
 
 //componentes globais
 import MenuBar from '../components/MenuBar';
@@ -45,6 +47,8 @@ const Routes = () => {
                 <PrivateRoute path="/schedulings" component={Schedulings} />
                 <PrivateRoute path="/usergroups" component={UserGroups} />
                 <Route path="/tests" component={Tests} />
+                <Route path="/schedule" component={Schedule} />
+                <Route path="/generalSettings" component={GeneralSettings} />
                 <Route path="*" component={() => (<><MenuBar /><h1>404 ERROR NOT FOUND <br /> Página não encontrada</h1></>)} />
             </Switch>
         </BrowserRouter >

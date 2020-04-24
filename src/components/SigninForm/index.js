@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 //import dos arquivos de configuração
 import apiBeyond from '../../config/apiBeyond';
 import { setUserAuthentication } from '../../config/redux/actions';
-import { TextField, Typography, Button, FormControl, InputLabel, Input, InputAdornment, IconButton, Paper } from '@material-ui/core';
+import { Typography, Button, FormControl, InputLabel, Input, InputAdornment, IconButton, Paper } from '@material-ui/core';
 import { Visibility, VisibilityOff, AccountCircle } from '@material-ui/icons';
 
 //import dos arquivos de estilos

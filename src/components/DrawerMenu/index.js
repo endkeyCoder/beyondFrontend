@@ -50,7 +50,9 @@ export default function DrawerMenu({ stateDrawer }) {
                         case 'settings':
                             return false;
                         case 'audit':
-                            return false;    
+                            return false;
+                        case 'schedule':
+                            return false;
                         default:
 
                             return (
@@ -87,6 +89,8 @@ export default function DrawerMenu({ stateDrawer }) {
                     case 'users':
                         return false
                     case 'usergroups':
+                        return false;
+                    case 'generalSettings':
                         return false;
                     default:
                         return (

@@ -102,6 +102,8 @@ export default function UserGroupsList(props) {
   async function handleBtnRecord(evt) {
     evt.preventDefault();
     try {
+      permissionsGroup.entity = undefined;
+      permissionsGroup.userGroup = undefined;
       const resSetPermissions = await apiBeyond.put('/putPermissions', permissionsGroup);
       if (resSetPermissions.data.message.statusCode == 200) {
         setBtnRecord({
@@ -115,7 +117,7 @@ export default function UserGroupsList(props) {
         console.log('print de resSetPermissions => ', resSetPermissions.data)
       }
     } catch (error) {
-      console.log('print de erro em handleBtnRecord => ', handleBtnRecord);
+      console.log('print de erro em handleBtnRecord => ', error);
       alert('Problema ao gravar permissões, tente novamente')
     }
   }
