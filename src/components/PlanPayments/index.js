@@ -21,7 +21,7 @@ import {
     Switch,
     Divider
 } from '@material-ui/core';
-import { Save, Cancel, Create, AddCircle, Close, LibraryBooks, ExpandMore, CheckCircle } from '@material-ui/icons';
+import { Save, Cancel, Create, AddCircle, Close, LibraryBooks, ExpandMore } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
     headerSetting: {
@@ -291,7 +291,7 @@ export default function PlanPayments() {
             </ExpansionPanel>
         ))
     }
-    console.log('print de planPayments => ', planPayments)
+
     return (
         <Paper elevation={3} className={classes.containerSetting}>
             <div className={classes.headerSetting}>

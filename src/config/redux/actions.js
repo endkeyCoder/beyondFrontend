@@ -13,6 +13,12 @@ export function setUserAuthentication(user, permissions) {
     }
 }
 
+export function logout() {
+    return {
+        type: 'LOGOUT',
+    }
+}
+
 export function setEntities(entities) {
     return {
         type: 'SET_ENTITIES',

@@ -63,7 +63,14 @@ export function userReducer(state = INITIAL_STATE, action) {
                     permissions: action.permissions
                 }
             }
-
+        case 'LOGOUT':
+            return {
+                ...state,
+                user: {
+                    data: {},
+                    permissions: []
+                }
+            }
         default:
             return state;
     }

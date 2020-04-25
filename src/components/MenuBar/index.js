@@ -5,7 +5,10 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../config/redux/actions'
 
 import DrawerMenu from '../DrawerMenu';
 
@@ -23,7 +26,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function MenuBar(props) {
   const classes = useStyles();
-
+  const dispatch = useDispatch();
   const [showDrawer, setshowDrawer] = useState({
     show: false
   })
@@ -38,6 +41,10 @@ export default function MenuBar(props) {
     setshowDrawer({ ...showDrawer, show: !showDrawer.show })
   }
 
+  function handleLogout() {
+    dispatch(logout())
+  }
+
   return (
     <div className={classes.root}>
       <AppBar position="static">
@@ -48,6 +55,7 @@ export default function MenuBar(props) {
           <Typography variant="h6" className={classes.title}>
             <Link to={{ pathname: "/" }}>Beyond System</Link>
           </Typography>
+          <Button onClick={handleLogout} color="inherit">Logout</Button>
         </Toolbar>
       </AppBar>
       <DrawerMenu stateDrawer={{ showDrawer, setshowDrawer }} />

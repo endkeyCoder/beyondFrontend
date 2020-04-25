@@ -20,6 +20,7 @@ import Tests from '../pages/Tests';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
     const authuser = useSelector(state => state.userReducer.user.data)
+  
     return (
         <Route {...rest}
             render={props => {
