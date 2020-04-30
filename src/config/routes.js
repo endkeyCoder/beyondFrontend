@@ -48,7 +48,7 @@ const Routes = () => {
                 <PrivateRoute path="/schedulings" component={Schedulings} />
                 <PrivateRoute path="/usergroups" component={UserGroups} />
                 <Route path="/tests" component={Tests} />
-                <Route path="/schedule" component={Schedule} />
+                <PrivateRoute path="/schedule" component={Schedule} />
                 <PrivateRoute path="/generalSettings" component={GeneralSettings} />
                 <Route path="*" component={() => (<><MenuBar /><h1>404 ERROR NOT FOUND <br /> Página não encontrada</h1></>)} />
             </Switch>
