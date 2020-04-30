@@ -12,7 +12,8 @@ const useStyles = makeStyles((theme) => ({
         padding: '1em',
         background: '#f1f1f1',
         padding: '1em',
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
+       
     }
 }))
 

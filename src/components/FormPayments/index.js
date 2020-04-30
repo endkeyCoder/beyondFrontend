@@ -30,10 +30,14 @@ const useStyles = makeStyles((theme) => ({
     containerSetting: {
         display: 'flex',
         flexDirection: 'column',
-        [theme.breakpoints.down('xs')]: {
+        [theme.breakpoints.down('sm')]: {
             width: '100%',
             marginBottom: '1em'
-        }
+        },
+        [theme.breakpoints.up('sm')]:{
+            marginRight: '2%'
+        },
+        flex: 1
     },
     bodySetting: {
         display: 'flex',

@@ -121,7 +121,6 @@ export default function SchedulingPost() {
         setProbability(probability);
     }
     function handleDateScheduling(dateScheduling) {
-        console.log('print de dateScheduling => ', dateScheduling)
         setDateScheduling(dateScheduling);
     }
     function handleHour(hour) {
@@ -205,7 +204,7 @@ export default function SchedulingPost() {
                 userId: dataUser.id,
                 externalUser: externalUsers.externalSelected.id
             })
-            console.log('print de resScheduling.data => ', resScheduling.data)
+      
             if (resScheduling.data.message.statusCode == 200) {
                 dispatch(setScheduling(resScheduling.data.data))
             }
@@ -239,7 +238,6 @@ export default function SchedulingPost() {
     })
 
     const classes = useStyles();
-    console.log('print de externalUsers => ', externalUsers)
     return (
         <Paper onSubmit={handleSubmitScheduling} component='form' elevation={3} className={classes.containerForm}>
             <div className={classes.containerHeader}>
@@ -360,6 +358,7 @@ export default function SchedulingPost() {
                     label="Ponto de referência"
                     value={referencePoint}
                     onChange={e => handleReferencePoint(e.target.value)}
+                    multiline
                 />
                 <TextField
                     label="Link do maps"

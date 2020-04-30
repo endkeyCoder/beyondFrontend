@@ -37,10 +37,8 @@ const useStyles = makeStyles((theme) => ({
         flexDirection: 'column',
         [theme.breakpoints.down('xs')]: {
             width: '100%',
-            maxWidth: '100%'
         },
-        maxWidth: '50%',
-        minWidth: '35%'
+        flex: 1
     },
     bodySetting: {
         background: '#f1f1f1',
