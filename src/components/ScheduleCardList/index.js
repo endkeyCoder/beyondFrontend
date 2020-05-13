@@ -1,8 +1,18 @@
-import React, { useState } from 'react';
-import { makeStyles, Card, CardContent, Typography, CardActions, BottomNavigation, BottomNavigationAction, TextField, Paper } from '@material-ui/core';
+import React, { useState, useEffect } from 'react';
+import {
+    makeStyles,
+    Card,
+    CardContent,
+    Typography,
+    CardActions,
+    BottomNavigation,
+    BottomNavigationAction,
+    TextField,
+} from '@material-ui/core';
 import { Info, LocationOn, Archive } from '@material-ui/icons';
 import PropTypes from 'prop-types';
-import MapaGoogle from '../MapaGoogle';
+
+import EndSale from './EndSale';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -54,10 +64,16 @@ const useStyles = makeStyles((theme) => ({
             marginRigth: '1em',
             marginTop: '0.5em'
         },
-        [theme.breakpoints.down('md')]:{
+        [theme.breakpoints.down('md')]: {
             width: '100%'
         },
         marginTop: '1em',
+    },
+    bodyInfo2: {
+        display: 'flex',
+        [theme.breakpoints.down('xs')]: {
+            flexDirection: 'column'
+        }
     }
 }))
 
@@ -73,7 +89,10 @@ function ScheduleCard({ scheduling }) {
         <Card variant="elevation" elevation={3} className={classes.itemCard}>
             <CardContent>
                 <div className={classes.headerCard}>
-                    <Typography variant="h5">{scheduling.client}</Typography>
+                    <div>
+                        <Typography variant="h5">{scheduling.client}</Typography>
+                        <Typography variant="subtitle1">{`Código do agendamento: ${scheduling.id}`}</Typography>
+                    </div>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                         <Typography variant="subtitle1">{`${(scheduling.dateScheduling).split("-")[2]}/${(scheduling.dateScheduling).split("-")[1]}/${(scheduling.dateScheduling).split("-")[0]}`}</Typography>
                         <Typography variant="subtitle2">{scheduling.hourScheduling}</Typography>
@@ -81,7 +100,7 @@ function ScheduleCard({ scheduling }) {
                 </div>
                 <TabPanel value={navPanel.index} index={0}>
                     <div className={classes.bodyInfo}>
-                        <div style={{ display: 'flex' }}>
+                        <div className={classes.bodyInfo2}>
                             <div>
                                 <TextField
                                     label="Idade"
@@ -199,7 +218,7 @@ function ScheduleCard({ scheduling }) {
                     </div>
                 </TabPanel>
                 <TabPanel value={navPanel.index} index={2}>
-                    <h3>Tela de finalização de venda</h3>
+                    <EndSale scheduling={scheduling} />
                 </TabPanel>
             </CardContent>
             <CardActions>
@@ -229,7 +248,7 @@ export default function ScheduleCardList({ schedulings }) {
     if (schedulings.length > 0) {
         return (
             <div className={classes.containerCards}>
-                {schedulings.map((scheduling) => <ScheduleCard scheduling={scheduling} />)}
+                {schedulings.map((scheduling) => <ScheduleCard key={scheduling.id} scheduling={scheduling} />)}
             </div>
         );
     } else {

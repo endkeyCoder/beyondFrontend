@@ -8,8 +8,8 @@ import apiBeyond from '../../config/apiBeyond';
 export default function Schedule() {
   const authuser = useSelector(state => state.userReducer.user.data);
   const [schedulings, setSchedulings] = useState([]);
-  const [initialDate, setInitialDate] = useState(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate()}`);
-  const [finalDate, setFinalDate] = useState(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${new Date().getDate()}`);
+  const [initialDate, setInitialDate] = useState(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${(new Date().getDate()).toString().padStart(2, '0')}`);
+  const [finalDate, setFinalDate] = useState(`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${(new Date().getDate()).toString().padStart(2, '0')}`);
 
   async function loadFirstSchedule() {
     try {
