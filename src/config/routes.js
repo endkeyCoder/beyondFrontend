@@ -10,6 +10,7 @@ import Schedulings from '../pages/Schedulings';
 import UserGroups from '../pages/UserGroups';
 import Schedule from '../pages/Schedule';
 import GeneralSettings from '../pages/GeneralSettings';
+import Audit from '../pages/Audit';
 
 //componentes globais
 import MenuBar from '../components/MenuBar';
@@ -20,7 +21,7 @@ import Tests from '../pages/Tests';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
     const authuser = useSelector(state => state.userReducer.user.data)
-  
+
     return (
         <Route {...rest}
             render={props => {
@@ -50,6 +51,7 @@ const Routes = () => {
                 <Route path="/tests" component={Tests} />
                 <PrivateRoute path="/schedule" component={Schedule} />
                 <PrivateRoute path="/generalSettings" component={GeneralSettings} />
+                <PrivateRoute path="/audit" component={Audit} />
                 <Route path="*" component={() => (<><MenuBar /><h1>404 ERROR NOT FOUND <br /> Página não encontrada</h1></>)} />
             </Switch>
         </BrowserRouter >
