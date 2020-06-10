@@ -1,7 +1,7 @@
 import { createStore, combineReducers } from 'redux';
-import { schedulingReducer, userReducer, entitiesReducer, groupsReducer } from './reducers';
+import { schedulingReducer, userReducer, entitiesReducer, groupsReducer, externalUsersReducer } from './reducers';
 
-const rootReucers = combineReducers({ schedulingReducer, userReducer, entitiesReducer, groupsReducer })
+const rootReucers = combineReducers({ schedulingReducer, userReducer, entitiesReducer, groupsReducer, externalUsersReducer })
 const store = createStore(rootReucers)
 
 export default store;

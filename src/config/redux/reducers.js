@@ -14,7 +14,8 @@ const INITIAL_STATE = {
             }
         ],
         permissions: []
-    }
+    },
+    externalUsers: []
 }
 
 export function schedulingReducer(state = INITIAL_STATE, action) {
@@ -114,6 +115,19 @@ export function groupsReducer(state = INITIAL_STATE, action) {
                     data: [...state.groups.data],
                     permissions: action.permissions
                 }
+            }
+
+        default:
+            return state;
+    }
+}
+
+export function externalUsersReducer(state = INITIAL_STATE, action) {
+    switch (action.type) {
+        case 'SET_EXTERNAL_USERS':
+            return {
+                ...state,
+                externalUsers: action.externalUsers
             }
 
         default:

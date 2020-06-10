@@ -1,7 +1,8 @@
 import React from 'react';
 import MenuBar from '../../components/MenuBar';
 import ShedulingPost from '../../components/SchedulingPost';
-import SelectSchedulings from '../../components/SelectSchedulings';
+//import SelectSchedulings from '../../components/SelectSchedulings';
+import SchedulingSelect from '../../components/SchedulingSelect';
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
@@ -20,7 +21,7 @@ export default function Schedulings() {
             <MenuBar />
             <div className={classes.container}>
                 <ShedulingPost />
-                <SelectSchedulings />
+                <SchedulingSelect />
             </div>
         </>
     );

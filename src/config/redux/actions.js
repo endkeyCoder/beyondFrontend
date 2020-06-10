@@ -53,3 +53,10 @@ export function syncroSchedulings(schedulings) {
         schedulings
     }
 }
+
+export function setExternalUsers(externalUsers){
+    return {
+        type: 'SET_EXTERNAL_USERS',
+        externalUsers
+    }
+}

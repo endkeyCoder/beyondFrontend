@@ -5,7 +5,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { Add, Visibility, Create, Delete } from '@material-ui/icons';
+import { Add, Visibility, Create, Delete, Star } from '@material-ui/icons';
 import { Button } from '@material-ui/core';
 
 import { useSelector, useDispatch } from 'react-redux';
@@ -49,12 +49,14 @@ const useStyles = makeStyles((theme) => ({
 
 export default function UserGroupsList(props) {
   const permissionsGroup = useSelector(state => state.groupsReducer.groups.permissions);
+  console.log('print de permissionsGroup => ', permissionsGroup)
   const [btnRecord, setBtnRecord] = useState({
     disabled: true
   });
   const classes = useStyles();
   const dispatch = useDispatch();
   const { setSelectGroup } = props.stateSelectedGroup;
+
   function handlePermissionAdd(entityId) {
     const attPermissionAdd = permissionsGroup.map(permission => {
       if (permission.entityId == entityId) {
@@ -66,6 +68,7 @@ export default function UserGroupsList(props) {
     setBtnRecord({ disabled: false })
     setSelectGroup({ disabled: true })
   }
+
   function handlePermissionRead(entityId) {
     const attPermissionRead = permissionsGroup.map(permission => {
       if (permission.entityId == entityId) {
@@ -77,6 +80,7 @@ export default function UserGroupsList(props) {
     setBtnRecord({ disabled: false })
     setSelectGroup({ disabled: true })
   }
+
   function handlePermissionUpdate(entityId) {
     const attPermissionUpdate = permissionsGroup.map(permission => {
       if (permission.entityId == entityId) {
@@ -88,6 +92,7 @@ export default function UserGroupsList(props) {
     setBtnRecord({ disabled: false })
     setSelectGroup({ disabled: true })
   }
+
   function handlePermissionDelete(entityId) {
     const attPermissionDelete = permissionsGroup.map(permission => {
       if (permission.entityId == entityId) {
@@ -99,6 +104,19 @@ export default function UserGroupsList(props) {
     setBtnRecord({ disabled: false })
     setSelectGroup({ disabled: true })
   }
+
+  function handlePermissionAll(entityId) {
+    const attPermissionAll = permissionsGroup.map(permission => {
+      if (permission.entityId == entityId) {
+        permission.all = !permission.all
+      }
+      return permission
+    })
+    dispatch(setPermissionsGroup(attPermissionAll))
+    setBtnRecord({ disabled: false })
+    setSelectGroup({ disabled: true })
+  }
+
   async function handleBtnRecord(evt) {
     evt.preventDefault();
     try {
@@ -159,11 +177,12 @@ export default function UserGroupsList(props) {
           <MyButton id={permission.entityId} onClick={(e) => handlePermissionRead(e.target.id)} granted={permission.read} variant="contained" color="default" className={classes.button} startIcon={<Visibility id={permission.entityId} />} />
           <MyButton id={permission.entityId} onClick={(e) => handlePermissionUpdate(e.target.id)} granted={permission.update} variant="contained" color="default" className={classes.button} startIcon={<Create id={permission.entityId} />} />
           <MyButton id={permission.entityId} onClick={(e) => handlePermissionDelete(e.target.id)} granted={permission.delete} variant="contained" color="default" className={classes.button} startIcon={<Delete id={permission.entityId} />} />
+          <MyButton id={permission.entityId} onClick={(e) => handlePermissionAll(e.target.id)} granted={permission.all} variant="contained" color="default" className={classes.button} startIcon={<Star id={permission.entityId} />} />
         </ExpansionPanelDetails>
       </ExpansionPanel>
     );
   })
-  console.log('print de permissionsGroup em groupList => ', permissionsGroup)
+
   return (
     <div className={classes.root}>
       <div className={classes.header}>
