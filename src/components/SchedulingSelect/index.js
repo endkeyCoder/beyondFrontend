@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import {
     makeStyles, FormGroup, FormControlLabel, Switch, TextField, Paper,
     ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Typography,
-    Button, Dialog, DialogActions, DialogTitle, DialogContent, DialogContentText
+    Button, Dialog, DialogActions, DialogTitle, DialogContent, DialogContentText,
+    FormControl, Select, InputLabel
 } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import { ExpandMore, Edit, Delete, Save } from '@material-ui/icons';
@@ -32,6 +33,9 @@ const useStyles = makeStyles(theme => ({
     item: {
         flex: 'auto',
         margin: '0.2em',
+        '& select': {
+            padding: '0.6em'
+        }
     },
     form: {
         display: 'flex',
@@ -65,7 +69,7 @@ const useStyles = makeStyles(theme => ({
     },
     bgDetailsScheduling: {
         background: '#f5f5f5'
-    }
+    },
 }))
 
 function SchedulingExpanded(props) {
@@ -186,24 +190,25 @@ function SchedulingExpanded(props) {
                             onChange={e => handleInfoScheduling('age', e.target.value)}
                             required
                         />
-                        <TextField
-                            label="Estado Civil"
-                            disabled={!editForm}
-                            className={classes.item}
-                            variant="outlined"
-                            margin="dense"
-                            select={true}
-                            style={{ minWidth: '8em' }}
-                            value={infoSchedulings.civilState || 'Problema!'}
-                            onChange={e => handleInfoScheduling('civilState', e.target.value)}
-                            required
-                        >
-                            <option value="solteiro(a)">Solteiro(a)</option>
-                            <option value="casado(a)">Casado(a)</option>
-                            <option value="viuvo(a)">Viúvo(a)</option>
-                            <option value="divorciado(a)">Divorciado(a)</option>
-                            <option value="separado(a)">Separado(a)</option>
-                        </TextField>
+                        <FormControl className={classes.item} size="small">
+                            <InputLabel shrink={true} variant="outlined" >
+                                Estado Civil
+                            </InputLabel>
+                            <Select
+                                variant="outlined"
+                                value={infoSchedulings.civilState}
+                                onChange={e => handleInfoScheduling('civilState', e.target.value)}
+                                native
+                                className={classes.item}
+                                disabled={!editForm}
+                            >
+                                <option value="solteiro(a)">Solteiro(a)</option>
+                                <option value="casado(a)">Casado(a)</option>
+                                <option value="viuvo(a)">Viúvo(a)</option>
+                                <option value="divorciado(a)">Divorciado(a)</option>
+                                <option value="separado(a)">Separado(a)</option>
+                            </Select>
+                        </FormControl>
                         <TextField
                             label="Conjugê"
                             disabled={!editForm}
@@ -287,23 +292,25 @@ function SchedulingExpanded(props) {
                             onChange={e => handleInfoScheduling('linkMaps', e.target.value)}
                             required
                         />
-                        <TextField
-                            label="status"
-                            disabled={!editForm}
-                            className={classes.item}
-                            variant="outlined"
-                            margin="dense"
-                            select={true}
-                            style={{ minWidth: '9em' }}
-                            value={infoSchedulings.status || 'Problema!'}
-                            onChange={e => handleInfoScheduling('status', e.target.value)}
-                            required
-                        >
-                            <option value="Agendado">Agendado</option>
-                            <option value="pendente">Pendente</option>
-                            <option value="vendido">Vendido</option>
-                            <option value="não vendido">Não vendido</option>
-                        </TextField>
+                        <FormControl className={classes.item} size="small">
+                            <InputLabel shrink={true} variant="outlined"margin="dense">
+                                Status
+                            </InputLabel>
+                            <Select
+                                disabled={!editForm}
+                                variant="outlined"
+                                size="small"
+                                value={infoSchedulings.status || 'Problema!'}
+                                onChange={e => handleInfoScheduling('status', e.target.value)}
+                                className={classes.item}
+                                native={true}
+                            >
+                                <option value="Agendado">Agendado</option>
+                                <option value="pendente">Pendente</option>
+                                <option value="vendido">Vendido</option>
+                                <option value="não vendido">Não vendido</option>
+                            </Select>
+                        </FormControl>
                         <Autocomplete
                             options={externalUsers}
                             getOptionLabel={(option) => option.name}
