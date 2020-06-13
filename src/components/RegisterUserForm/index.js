@@ -1,8 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import apiBeyond from '../../config/apiBeyond';
 import { Link } from 'react-router-dom';
-
-import './styles.css';
+import { TextField, Paper, Button, Typography, makeStyles, FormControl, FormHelperText, Select, InputLabel } from '@material-ui/core';
+import { PersonAdd } from '@material-ui/icons';
+const UseStyles = makeStyles(theme => ({
+    container: {
+        display: 'flex',
+        padding: '1em',
+        flexWrap: 'wrap',
+        alignItems: 'baseline'
+    },
+    item: {
+        marginBottom: '0.7em',
+        flex: 'auto',
+        [theme.breakpoints.up('sm')]: {
+            marginRight: '0.7em',
+        }
+    },
+    container2: {
+        display: 'flex',
+        padding: '1em',
+        flexDirection: 'column'
+    },
+    button: {
+        maxHeight: '5em'
+    }
+}))
 
 export default function RegisterUserForm() {
     const [nick, setNick] = useState('');
@@ -69,36 +92,58 @@ export default function RegisterUserForm() {
         }
         loadGroups();
     })
-    console.log('print de idGroup em RegisterUserForm => ', idGroup)
+    const classes = UseStyles();
     return (
-        <form className="formRegisterUser" onSubmit={register}>
-            <div className="headerRegisterUserForm">
-                <h2>Dados para cadastro</h2>
-            </div>
-            <div className="bodyRegisterUserForm">
-                <div className="itemRegisterUserForm">
-                    <label>Nick</label>
-                    <input onChange={(e) => handleNick(e.target.value)} type="text" placeholder="nome de usuário" required />
-                </div>
-                <div className="itemRegisterUserForm">
-                    <label>Senha</label>
-                    <input onChange={(e) => handlePassword(e.target.value)} type="password" required />
-                </div>
-                <div className="itemRegisterUserForm">
-                    <label>Confirme sua senha</label>
-                    <input onChange={(e) => handleConfirmPassword(e.target.value)} type="password" required />
-                </div>
-                <div className="itemRegisterUserForm">
-                    <label>Nome completo</label>
-                    <input onChange={(e) => handleName(e.target.value)} type="text" placeholder="nome real" required />
-                </div>
-                <div className="itemRegisterUserForm">
-                    <label>Email</label>
-                    <input onChange={(e) => handleEmail(e.target.value)} type="email" required />
-                </div>
-                <div className="itemRegisterUserForm">
-                    <label>Grupo do Usuário</label>
-                    <select onChange={(e) => handleIdGroup(e.target.value)}>
+        <Paper className={classes.container2} elevation={3}>
+            <div><Typography variant="h5">Cadastro de usuário</Typography></div>
+            <form className={classes.container} onSubmit={register}>
+                <TextField
+                    label="Nome"
+                    placeholder="Nome completo"
+                    required
+                    value={name}
+                    onChange={e => handleName(e.target.value)}
+                    className={classes.item}
+                />
+                <TextField
+                    label="Nick"
+                    placeholder="Nome de usuário"
+                    required
+                    value={nick}
+                    onChange={e => handleNick(e.target.value)}
+                    className={classes.item}
+                />
+                <TextField
+                    label="Senha"
+                    type="password"
+                    required
+                    value={password}
+                    onChange={e => handlePassword(e.target.value)}
+                    className={classes.item}
+                />
+                <TextField
+                    label="Senha novamente"
+                    type="password"
+                    required
+                    value={confirmPassword}
+                    onChange={e => handleConfirmPassword(e.target.value)}
+                    className={classes.item}
+                />
+                <FormControl className={classes.item}>
+                    <TextField
+                        label="Email"
+                        placeholder="Email válido"
+                        type="email"
+                        required
+                        value={email}
+                        onChange={e => handleEmail(e.target.value)}
+                    />
+                    <FormHelperText><Typography variant="subtitle2">O email será usado para recuperação de senha</Typography></FormHelperText>
+                </FormControl>
+                <FormControl style={{ minWidth: '8em' }} className={classes.item}>
+                    <InputLabel shrink={true}>Grupo</InputLabel>
+                    <Select onChange={(e) => handleIdGroup(e.target.value)} native>
+                        <option value=''>Selecione um grupo</option>
                         {
                             groups.map(group => {
                                 const { name, id } = group;
@@ -107,17 +152,12 @@ export default function RegisterUserForm() {
                                 )
                             })
                         }
-                    </select>
-                </div>
-            </div>
-            <div className="footerRegisterUserForm">
-                <div className="itemRegisterUserForm">
-                    <button type="submit">Cadastrar</button>
-                </div>
-                <div className="itemRegisterUserForm">
-                    <Link to={{pathname: 'signin'}}>Voltar ao login</Link>
-                </div>
-            </div>
-        </form>
+                    </Select>
+                </FormControl>
+                <Button className={classes.button} type="submit" variant="contained" color="primary" size="small" startIcon={<PersonAdd />}>
+                    Cadastrar
+                </Button>
+            </form>
+        </Paper>
     );
 }
