@@ -9,9 +9,17 @@ import Typography from '@material-ui/core/Typography';
 
 import { useSelector } from 'react-redux'
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
     root: {
-        minWidth: 275,
+        width: '37em',
+        display: 'flex',
+        flexDirection: 'column',
+        [theme.breakpoints.down('sm')]: {
+            flex: 'auto',
+        },
+        [theme.breakpoints.down('md')]: {
+            marginBottom: '0.8em'
+        }
     },
     bullet: {
         display: 'inline-block',
@@ -24,13 +32,13 @@ const useStyles = makeStyles({
     pos: {
         marginBottom: 12,
     },
-});
+}));
 
 export default function CardInfoUser() {
     const classes = useStyles();
     const infoUser = useSelector(state => state.userReducer.user.data)
     return (
-        <Card className={classes.root}>
+        <Card className={classes.root} elevation={3}>
             <CardContent>
                 <Typography className={classes.title} color="textSecondary" gutterBottom>
                     Nome do usuário

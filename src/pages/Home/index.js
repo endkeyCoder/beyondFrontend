@@ -1,11 +1,30 @@
 import React, { useEffect } from 'react';
 import Menu from '../../components/MenuBar';
 import CardInfoUser from '../../components/CardInfoUser';
+import ChangePassword from '../../components/ChangePassword';
 import apiBeyond from '../../config/apiBeyond';
 import { useDispatch, useSelector } from 'react-redux';
 import { setExternalUsers } from '../../config/redux/actions';
 
+import { makeStyles } from '@material-ui/core';
+
+const useStyles = makeStyles(theme => ({
+    container: {
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'space-evenly',
+        padding: '1em',
+        [theme.breakpoints.down('sm')]:{
+            flex: 'auto'
+        },
+        [theme.breakpoints.down('md')]:{
+            justifyContent: 'flex-start'
+        }
+    },
+
+}))
 export default function Home() {
+    const classes = useStyles();
     const dispatch = useDispatch();
     const externalUsers = useSelector(state => state.externalUsersReducer.externalUsers)
 
@@ -26,12 +45,12 @@ export default function Home() {
             loadExternalUsers()
         }
     })
-    console.log('print de externalUsers em Home => ', externalUsers)
     return (
         <>
             <Menu />
-            <section>
+            <section className={classes.container}>
                 <CardInfoUser />
+                <ChangePassword />
             </section>
         </>
     );
