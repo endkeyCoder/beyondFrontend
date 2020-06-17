@@ -11,7 +11,6 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'space-around',
         padding: '1em',
         background: '#f1f1f1',
-        padding: '1em',
         flexWrap: 'wrap',
        
     }
