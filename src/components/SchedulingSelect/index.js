@@ -7,7 +7,7 @@ import {
     FormControl, Select, InputLabel
 } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
-import { ExpandMore, Edit, Delete, Save } from '@material-ui/icons';
+import { ExpandMore, Edit, Delete, Save, CropRounded } from '@material-ui/icons';
 import moment from 'moment';
 import apiBeyond from '../../config/apiBeyond';
 import { useSelector } from 'react-redux';
@@ -73,13 +73,13 @@ const useStyles = makeStyles(theme => ({
 }))
 
 function SchedulingExpanded(props) {
-    console.log('print de props em SchedulingExpanded => ', props)
     const { client, id } = props;
     const classes = useStyles();
     const [editForm, setEditForm] = useState(false);
     const [infoSchedulings, setInfoSchedulings] = useState(props)
     const externalUsers = useSelector(state => state.externalUsersReducer.externalUsers)
     const [openModal, setOpenModal] = useState(false);
+    const crud = useSelector(state => state.userReducer.user.permissions.find(permission => permission.entity[0].name == 'schedulings'))
 
     const handleOpenModal = () => {
         setOpenModal(!openModal)
@@ -107,6 +107,24 @@ function SchedulingExpanded(props) {
         }
     }
 
+    function BuilderPermissions(index) {
+        const arrComponents = [];
+        const btnEdit = (key) => <Button key={key} size="small" variant="contained" color="primary" onClick={handleEditForm} startIcon={<Edit />}>Editar</Button>
+        const btnSave = (key) => <Button key={key} size="small" variant="contained" color="primary" onClick={putScheduling} startIcon={<Save />}>Salvar</Button>
+        const btnDelete = (key) => <Button key={key} size="small" variant="contained" color="secondary" onClick={handleOpenModal} startIcon={<Delete />}>Excluir</Button>
+        if (crud.update) {
+            if (!editForm) {
+                arrComponents.push(btnEdit)
+            } else {
+                arrComponents.push(btnSave)
+            }
+        }
+        if (crud.delete) {
+            arrComponents.push(btnDelete)
+        }
+        return arrComponents;
+    }
+
     return (
         <>
             <ExpansionPanel className={`${classes.item} ${classes.bgPanelScheduling}`}>
@@ -121,11 +139,8 @@ function SchedulingExpanded(props) {
                 <ExpansionPanelDetails className={`${classes.container} ${classes.bgDetailsScheduling}`}>
                     <div className={classes.actionsForm}>
                         {
-                            !editForm ?
-                                <Button size="small" variant="contained" color="primary" onClick={handleEditForm} startIcon={<Edit />}>Editar</Button> :
-                                <Button size="small" variant="contained" color="primary" onClick={putScheduling} startIcon={<Save />}>Salvar</Button>
+                            BuilderPermissions().map((Components, index) => Components(index))
                         }
-                        <Button size="small" variant="contained" color="secondary" onClick={handleOpenModal} startIcon={<Delete />}>Excluir</Button>
                     </div>
                     <div className={classes.form}>
                         <TextField
@@ -293,7 +308,7 @@ function SchedulingExpanded(props) {
                             required
                         />
                         <FormControl className={classes.item} size="small">
-                            <InputLabel shrink={true} variant="outlined"margin="dense">
+                            <InputLabel shrink={true} variant="outlined" margin="dense">
                                 Status
                             </InputLabel>
                             <Select
@@ -401,7 +416,6 @@ function SchedulingSelect() {
     const classes = useStyles();
     const userLogged = useSelector(state => state.userReducer.user.data)
     const userPermissions = useSelector(state => state.userReducer.user.permissions)
-
     const [schedulings, setSchedulings] = useState([]);
     const [initialDate, setInitialDate] = useState(moment().subtract(30, 'days').format('YYYY-MM-DD'));
     const [finalDate, setFinalDate] = useState(moment().format('YYYY-MM-DD'));
@@ -411,6 +425,7 @@ function SchedulingSelect() {
         enable: false,
         content: 'dateScheduling'
     });
+
     const handleInitialDate = (value) => {
         setInitialDate(value)
     }
@@ -440,7 +455,7 @@ function SchedulingSelect() {
     }
     const getSchedulings = async () => {
         try {
-            const resSchedulings = await apiBeyond.get('/getSchedulingByIdOrClient', {
+            const resSchedulings = await apiBeyond.get('/getSchedulingsByFilters', {
                 params: {
                     initialDate,
                     finalDate,
@@ -462,7 +477,7 @@ function SchedulingSelect() {
     useEffect(() => {
         getSchedulings()
     }, [initialDate, finalDate, codScheduling, client, typeDate])
-    console.log('print de schedulings => ', schedulings)
+
     return (
         <Paper className={classes.container} elevation={3}>
             <div className={`${classes.header} ${classes.item}`}>

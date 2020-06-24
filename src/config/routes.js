@@ -11,12 +11,10 @@ import UserGroups from '../pages/UserGroups';
 import Schedule from '../pages/Schedule';
 import GeneralSettings from '../pages/GeneralSettings';
 import Audit from '../pages/Audit';
+import ImpExp from '../pages/ImpExp';
 
 //componentes globais
 import MenuBar from '../components/MenuBar';
-
-
-import Tests from '../pages/Tests';
 
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
@@ -40,6 +38,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
 }
 
 const Routes = () => {
+    //<Route path="/ImpExp" component={ImpExp} /> rota de importação exportação de excel
     return (
         < BrowserRouter >
             <Switch>
@@ -48,11 +47,11 @@ const Routes = () => {
                 <PrivateRoute path="/users" component={RegisterUser} />
                 <PrivateRoute path="/schedulings" component={Schedulings} />
                 <PrivateRoute path="/usergroups" component={UserGroups} />
-                <Route path="/tests" component={Tests} />
                 <PrivateRoute path="/schedule" component={Schedule} />
                 <PrivateRoute path="/generalSettings" component={GeneralSettings} />
                 <PrivateRoute path="/audit" component={Audit} />
                 <Route path="*" component={() => (<><MenuBar /><h1>404 ERROR NOT FOUND <br /> Página não encontrada</h1></>)} />
+
             </Switch>
         </BrowserRouter >
     )
