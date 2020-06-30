@@ -185,7 +185,7 @@ function SchedulingExpanded(props) {
                             required
                         />
                         <TextField
-                            value={infoSchedulings.city || 'Problema!'}
+                            value={infoSchedulings.city || 'Cidade não informada corretamente!'}
                             label="Cidade"
                             disabled={!editForm}
                             className={classes.item}
@@ -195,7 +195,7 @@ function SchedulingExpanded(props) {
                             required
                         />
                         <TextField
-                            value={infoSchedulings.age || 'Problema!'}
+                            value={infoSchedulings.age || 'Idade não informada corretamente!'}
                             label="Idade"
                             disabled={!editForm}
                             className={classes.item}
