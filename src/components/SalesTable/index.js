@@ -185,7 +185,7 @@ export default function SalesTable() {
     const dataHead = ['Lançamento da venda', 'Plano de pagamento', 'total da venda', 'data da visita', 'usuário externo',
         'Entrada', 'Observação']
     const [totRows, setTotRows] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(1)
+    const [rowsPerPage, setRowsPerPage] = useState(5)
 
     const queryDataBody = async () => {
         try {
@@ -424,7 +424,7 @@ export default function SalesTable() {
                     <TableFooter>
                         <TableRow>
                             <TablePagination
-                                rowsPerPageOptions={[1, 2, 25, 50, 75, 100, { label: 'All', value: totRows }]}
+                                rowsPerPageOptions={[5, 10, 25, 50, 75, 100, { label: 'All', value: totRows }]}
                                 SelectProps={{
                                     native: true
                                 }}
