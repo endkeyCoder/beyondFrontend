@@ -20,7 +20,6 @@ import apiBeyond from '../../config/apiBeyond';
 import moment from 'moment';
 import { TextField, FormControl, Select, InputLabel } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
-import { setExternalUsers } from '../../config/redux/actions'
 
 const useStyles1 = makeStyles((theme) => ({
     root: {
@@ -87,26 +86,6 @@ TablePaginationActions.propTypes = {
     rowsPerPage: PropTypes.number.isRequired,
 };
 
-function createData(name, calories, fat) {
-    return { name, calories, fat };
-}
-
-const rows = [
-    createData('Cupcake', 305, 3.7),
-    createData('Donut', 452, 25.0),
-    createData('Eclair', 262, 16.0),
-    createData('Frozen yoghurt', 159, 6.0),
-    createData('Gingerbread', 356, 16.0),
-    createData('Honeycomb', 408, 3.2),
-    createData('Ice cream sandwich', 237, 9.0),
-    createData('Jelly Bean', 375, 0.0),
-    createData('KitKat', 518, 26.0),
-    createData('Lollipop', 392, 0.2),
-    createData('Marshmallow', 318, 0),
-    createData('Nougat', 360, 19.0),
-    createData('Oreo', 437, 18.0),
-].sort((a, b) => (a.calories < b.calories ? -1 : 1));
-
 const useStyles2 = makeStyles(theme => ({ //meus estilos ficam aqui 
     table: {
         minWidth: 500,
@@ -140,9 +119,7 @@ const useStyles2 = makeStyles(theme => ({ //meus estilos ficam aqui
 
 export default function SalesTable() {
     const classes = useStyles2();
-    const dispatch = useDispatch();
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [initialDate, setInitialDate] = React.useState(moment().subtract(30, 'days').format('YYYY-MM-DD'))
     const [finalDate, setFinalDate] = React.useState(moment().format('YYYY-MM-DD'))
     const [dataBody, setDataBody] = React.useState({
@@ -207,13 +184,15 @@ export default function SalesTable() {
     const [dateScheduling, setDateScheduling] = useState('false')
     const dataHead = ['Lançamento da venda', 'Plano de pagamento', 'total da venda', 'data da visita', 'usuário externo',
         'Entrada', 'Observação']
-
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+    const [totRows, setTotRows] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(1)
 
     const queryDataBody = async () => {
         try {
             const resGetSalesByFilters = await apiBeyond.get(`/getSalesByFilters?initialDate=${initialDate}&finalDate=${finalDate}&idExternalUser=${externalUserSelected.id}&idGroup=${groupSelected}&dateScheduling=${dateScheduling}`)
             setDataBody(resGetSalesByFilters.data.data)
+            setTotRows(resGetSalesByFilters.data.data.sales.length)
+            console.log('print de totRows => ', totRows)
             setLoad(false)
         } catch (error) {
             console.log('print de error em loadDataBody => ', error)
@@ -275,10 +254,9 @@ export default function SalesTable() {
         setPage(newPage);
     };
 
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    };
+    const handleChangeRowsPerPage = (value) => {
+        setRowsPerPage(value)
+    }
 
     React.useEffect(() => {
         if (load) {
@@ -358,105 +336,104 @@ export default function SalesTable() {
                     </TableHead>
                     <TableBody>
                         {
-                            dataBody.sales.map(sale => {
-                                const { id, value, createdAt: date, observation } = sale;
-                                const { dateScheduling } = sale.scheduling[0];
-                                const { name, nick } = sale.user[0];
-                                const { title: titlePlanPayment } = sale.planPayment[0];
-                                const valuesEntries = sale.formPaymentsId.map(dataFormPaymentId => {
-                                    const { value: valueFormPayentEntry, entry, id: idFormpaymentEntry } = dataFormPaymentId
-                                    const { title: titleFormPaymentEntry } = dataFormPaymentId.formPayment[0]
-                                    if (entry) {
-                                        return { titleFormPaymentEntry, valueFormPayentEntry, idFormpaymentEntry }
-                                    }
-                                    return false
-                                })
-                                const valuesSales = sale.formPaymentsId.map(dataFormPaymentId => {
-                                    const { value: valueFormPayent } = dataFormPaymentId
-                                    const { title: titleFormPayment, id: idFormpayment, rate } = dataFormPaymentId.formPayment[0]
-                                    return { titleFormPayment, valueFormPayent, idFormpayment, rate }
-                                })
-                                return (
-                                    <TableRow key={id}>
-                                        <TableCell>
-                                            {moment(date).format('DD-MM-YYYY')}
-                                        </TableCell>
-                                        <TableCell>
-                                            {titlePlanPayment}
-                                        </TableCell>
-                                        <TableCell>
-                                            {value}
-                                        </TableCell>
-                                        <TableCell>
-                                            {moment(dateScheduling).format('DD-MM-YYYY')}
-                                        </TableCell>
-                                        <TableCell>
-                                            <b>Nome: </b>{name}<br />
-                                            <b>Nick: </b>{nick}
-                                        </TableCell>
-                                        <TableCell>
-                                            {
-                                                valuesEntries.map(values => {
-                                                    if (values) {
-                                                        return (
-                                                            <div>
-                                                                <b>Forma de pagamento: </b>{values.titleFormPaymentEntry}<br />
-                                                                <b>Valor: </b>{values.valueFormPayentEntry}<br />
-                                                            </div>
-                                                        )
-                                                    }
-                                                })
+                            (rowsPerPage > 0
+                                ? dataBody.sales.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                : dataBody.sales).map((sale, index) => {
+                                    if ((index + 1) <= rowsPerPage) {
+                                        const { id, value, createdAt: date, observation } = sale;
+                                        const { dateScheduling } = sale.scheduling[0];
+                                        const { name, nick } = sale.user[0];
+                                        const { title: titlePlanPayment } = sale.planPayment[0];
+                                        const valuesEntries = sale.formPaymentsId.map(dataFormPaymentId => {
+                                            const { value: valueFormPayentEntry, entry, id: idFormpaymentEntry } = dataFormPaymentId
+                                            const { title: titleFormPaymentEntry } = dataFormPaymentId.formPayment[0]
+                                            if (entry) {
+                                                return { titleFormPaymentEntry, valueFormPayentEntry, idFormpaymentEntry }
                                             }
-                                        </TableCell>
-                                        <TableCell>{observation}</TableCell>
-                                        {
-                                            listFormPayments.map(formPayment => {
-                                                const { id } = formPayment
-                                                const fieldSelected = valuesSales.find(valueSale => {
-                                                    return valueSale.idFormpayment == id
-                                                })
-                                                if (fieldSelected) {
-                                                    return (
-                                                        <TableCell key={id}>
-                                                            {
-                                                                <div>
-                                                                    <b>Valor: </b>{fieldSelected.valueFormPayent}<br />
-                                                                    <b>Taxa: </b>{fieldSelected.rate}
-                                                                </div>
+                                            return false
+                                        })
+                                        const valuesSales = sale.formPaymentsId.map(dataFormPaymentId => {
+                                            const { value: valueFormPayent } = dataFormPaymentId
+                                            const { title: titleFormPayment, id: idFormpayment, rate } = dataFormPaymentId.formPayment[0]
+                                            return { titleFormPayment, valueFormPayent, idFormpayment, rate }
+                                        })
+                                        return (
+                                            <TableRow key={id}>
+                                                <TableCell>
+                                                    {moment(date).format('DD-MM-YYYY')}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {titlePlanPayment}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {value}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {moment(dateScheduling).format('DD-MM-YYYY')}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <b>Nome: </b>{name}<br />
+                                                    <b>Nick: </b>{nick}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {
+                                                        valuesEntries.map(values => {
+                                                            if (values) {
+                                                                return (
+                                                                    <div>
+                                                                        <b>Forma de pagamento: </b>{values.titleFormPaymentEntry}<br />
+                                                                        <b>Valor: </b>{values.valueFormPayentEntry}<br />
+                                                                    </div>
+                                                                )
                                                             }
-                                                        </TableCell>
-                                                    )
+                                                        })
+                                                    }
+                                                </TableCell>
+                                                <TableCell>{observation}</TableCell>
+                                                {
+                                                    listFormPayments.map(formPayment => {
+                                                        const { id } = formPayment
+                                                        const fieldSelected = valuesSales.find(valueSale => {
+                                                            return valueSale.idFormpayment == id
+                                                        })
+                                                        if (fieldSelected) {
+                                                            return (
+                                                                <TableCell key={id}>
+                                                                    {
+                                                                        <div>
+                                                                            <b>Valor: </b>{fieldSelected.valueFormPayent}<br />
+                                                                            <b>Taxa: </b>{fieldSelected.rate}
+                                                                        </div>
+                                                                    }
+                                                                </TableCell>
+                                                            )
+                                                        }
+                                                        return <TableCell />;
+                                                    })
                                                 }
-                                                return <TableCell />;
-                                            })
-                                        }
-                                    </TableRow>
-                                )
-                            })
+                                            </TableRow>
+                                        )
+                                    } else {
+                                        return (
+                                            <TableRow />
+                                        )
+                                    }
+                                })
                         }
-
-                        {emptyRows > 0 && (
-                            <TableRow style={{ height: 53 * emptyRows }}>
-                                <TableCell colSpan={6} />
-                            </TableRow>
-                        )}
                     </TableBody>
                     <TableFooter>
                         <TableRow>
                             <TablePagination
-                                rowsPerPageOptions={[5, 10, 25, 50, 75, 100, { label: 'All', value: -1 }]}
-                                colSpan={3}
-                                count={rows.length}
+                                rowsPerPageOptions={[1, 2, 25, 50, 75, 100, { label: 'All', value: totRows }]}
+                                SelectProps={{
+                                    native: true
+                                }}
+                                labelRowsPerPage="Linhas por página"
+                                count={totRows}
+                                onChangeRowsPerPage={(e) => handleChangeRowsPerPage(e.target.value)}
                                 rowsPerPage={rowsPerPage}
                                 page={page}
-                                SelectProps={{
-                                    inputProps: { 'aria-label': 'rows per page' },
-                                    native: true,
-                                }}
-                                labelRowsPerPage='Linhas por página'
-                                onChangePage={handleChangePage}
-                                onChangeRowsPerPage={handleChangeRowsPerPage}
-                                ActionsComponent={TablePaginationActions}
+                                onChangePage={(evt, newPage) => handleChangePage(evt, newPage)}
                             />
                         </TableRow>
                     </TableFooter>
