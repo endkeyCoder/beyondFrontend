@@ -73,7 +73,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 function SchedulingExpanded(props) {
-    const { client, id } = props;
+    const { client, id, cod } = props;
     const classes = useStyles();
     const [editForm, setEditForm] = useState(false);
     const [infoSchedulings, setInfoSchedulings] = useState(props)
@@ -132,7 +132,7 @@ function SchedulingExpanded(props) {
                     expandIcon={<ExpandMore />}
                 >
                     <div>
-                        <Typography variant="subtitle2">{`codigo: ${id}`}</Typography>
+                        <Typography variant="subtitle2">{`codigo: ${cod}`}</Typography>
                         <Typography variant="overline">{client}</Typography>
                     </div>
                 </ExpansionPanelSummary>

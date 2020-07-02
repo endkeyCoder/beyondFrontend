@@ -91,7 +91,7 @@ function ScheduleCard({ scheduling }) {
                 <div className={classes.headerCard}>
                     <div>
                         <Typography variant="h5">{scheduling.client}</Typography>
-                        <Typography variant="subtitle2">{`Código do agendamento: ${scheduling.id}`}</Typography>
+                        <Typography variant="subtitle2">{`Código do agendamento: ${scheduling.cod}`}</Typography>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                         <Typography variant="subtitle1">{`${(scheduling.dateScheduling).split("-")[2]}/${(scheduling.dateScheduling).split("-")[1]}/${(scheduling.dateScheduling).split("-")[0]}`}</Typography>
