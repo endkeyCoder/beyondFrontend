@@ -18,7 +18,7 @@ import TableHead from '@material-ui/core/TableHead';
 import { Autocomplete } from '@material-ui/lab';
 import apiBeyond from '../../config/apiBeyond';
 import moment from 'moment';
-import { TextField, FormControl, Select, InputLabel } from '@material-ui/core';
+import { TextField, FormControl, Select, InputLabel, Divider } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 
 const useStyles1 = makeStyles((theme) => ({
@@ -185,7 +185,7 @@ export default function SalesTable() {
     const dataHead = ['Lançamento da venda', 'Plano de pagamento', 'total da venda', 'data da visita', 'usuário externo',
         'Entrada', 'Observação']
     const [totRows, setTotRows] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5)
+    const [rowsPerPage, setRowsPerPage] = useState(5);
 
     const queryDataBody = async () => {
         try {
@@ -245,7 +245,7 @@ export default function SalesTable() {
     const handleExternalUserSelected = (value) => {
         if (value == null) {
             setExternalUserSelected({ id: '', name: '' })
-        } else if (value.name.length > 3) {
+        } else if (value.name.length >= 3) {
             setExternalUserSelected(value)
         }
     }
@@ -423,6 +423,21 @@ export default function SalesTable() {
                     </TableBody>
                     <TableFooter>
                         <TableRow>
+                            <div style={{ width: '25em', display: 'flex', flexDirection: 'column' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
+                                    <h4>Total bruto: </h4>
+                                    {dataBody.totSales}
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
+                                    <h4>Total de taxas: </h4>
+                                    {dataBody.totRates}
+                                </div>
+                                <Divider />
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
+                                    <h4>Total líquido: </h4>
+                                    {dataBody.totLiquid}
+                                </div>
+                            </div>
                             <TablePagination
                                 rowsPerPageOptions={[5, 10, 25, 50, 75, 100, { label: 'All', value: totRows }]}
                                 SelectProps={{
