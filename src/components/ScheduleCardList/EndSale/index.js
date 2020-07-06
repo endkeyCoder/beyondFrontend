@@ -90,6 +90,7 @@ function EndSale({ scheduling }) {
     const [openList, setOpenList] = useState(true)
 
     const userInfo = useSelector(state => state.userReducer.user.data)
+    const [statusList, setStatusList] = useState(['pendente', 'ausente', 'cancelado', 'não localizado', 'não vendido', 'reagendar', 'recusado', 'vendido', 'conjuge ausente'])
 
     async function loadPlanPayments() {
         try {
@@ -293,10 +294,9 @@ function EndSale({ scheduling }) {
                         value={dataSale.sale.scheduling[0].status}
                         onChange={e => handleStatus(e.target.value)}
                     >
-                        <option value="Agendado">Agendado</option>
-                        <option value="pendente">Pendente</option>
-                        <option value="vendido">Vendido</option>
-                        <option value="não vendido">Não vendido</option>
+                        {
+                            statusList.map((status, key) => <option key={key} value={status}>{status}</option>)
+                        }
                     </Select>
                     <FormHelperText>Status do agendamento</FormHelperText>
                 </FormControl>
@@ -315,14 +315,14 @@ function EndSale({ scheduling }) {
                             if (selected[0].idFormPayment == "") {
                                 return ""
                             }
-                            else{
+                            else {
                                 return (
-                                <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                    {selected.map(value => (
-                                        <Chip key={value.idFormPayment} label={value.formPayment[0].title} style={{ margin: 2 }} />
-                                    ))}
-                                </div>
-                            )
+                                    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                        {selected.map(value => (
+                                            <Chip key={value.idFormPayment} label={value.formPayment[0].title} style={{ margin: 2 }} />
+                                        ))}
+                                    </div>
+                                )
                             }
                         }}
                         MenuProps={MenuProps}

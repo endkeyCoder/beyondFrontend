@@ -20,6 +20,7 @@ import apiBeyond from '../../config/apiBeyond';
 import moment from 'moment';
 import { TextField, FormControl, Select, InputLabel, Divider } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
+import { setExternalUsers } from '../../config/redux/actions';
 
 const useStyles1 = makeStyles((theme) => ({
     root: {
@@ -186,13 +187,15 @@ export default function SalesTable() {
         'Entrada', 'Observação']
     const [totRows, setTotRows] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [statusList, setStatusList] = useState(['pendente', 'ausente', 'cancelado', 'não localizado', 'não vendido', 'reagendar', 'recusado', 'vendido', 'conjuge ausente'])
+    const [statusSelected, setStatusSelected] = useState('vendido')
+    const dispatch = useDispatch();
 
     const queryDataBody = async () => {
         try {
-            const resGetSalesByFilters = await apiBeyond.get(`/getSalesByFilters?initialDate=${initialDate}&finalDate=${finalDate}&idExternalUser=${externalUserSelected.id}&idGroup=${groupSelected}&dateScheduling=${dateScheduling}`)
+            const resGetSalesByFilters = await apiBeyond.get(`/getSalesByFilters?initialDate=${initialDate}&finalDate=${finalDate}&idExternalUser=${externalUserSelected.id}&idGroup=${groupSelected}&dateScheduling=${dateScheduling}&statusSale=${statusSelected}`)
             setDataBody(resGetSalesByFilters.data.data)
             setTotRows(resGetSalesByFilters.data.data.sales.length)
-            console.log('print de totRows => ', totRows)
             setLoad(false)
         } catch (error) {
             console.log('print de error em loadDataBody => ', error)
@@ -213,7 +216,11 @@ export default function SalesTable() {
         try {
             const resGroups = await apiBeyond.get('/getAllUserGroups');
             if (resGroups.data.message.statusCode == 200) {
-                resGroups.data.data.push(usergroups[0])
+                resGroups.data.data.push({
+                    id: '',
+                    name: 'Todos',
+                    default: true
+                })
                 setUsergroups(resGroups.data.data)
             }
         } catch (error) {
@@ -257,6 +264,29 @@ export default function SalesTable() {
     const handleChangeRowsPerPage = (value) => {
         setRowsPerPage(value)
     }
+    const handleStatusSelected = (value) => {
+        setStatusSelected(value)
+    }
+
+    const filterUsersByGroup = async () => {
+        try {
+            const resFilterUsers = await apiBeyond.get(`/getUsersByGroup/${groupSelected}`)
+            dispatch(setExternalUsers(resFilterUsers.data.data))
+        } catch (error) {
+            console.log('Problema ao tentar atualizar os usuários por grupo')
+            alert('Houve um problema para atualizar a lista de usuarios, tente alterar os filtros')
+        }
+    }
+
+    const loadExternalUsers = async () => {
+        try {
+            const resGetAllExternalUsers = await apiBeyond.get('/getExternalUsers');
+            dispatch(setExternalUsers(resGetAllExternalUsers.data.data))
+        } catch (error) {
+            console.log('print de error e, loadExternalUsers => ', error)
+            alert('Problema ao carregar os usuários')
+        }
+    }
 
     React.useEffect(() => {
         if (load) {
@@ -268,12 +298,21 @@ export default function SalesTable() {
 
     React.useEffect(() => {
         queryDataBody()
-    }, [initialDate, finalDate, externalUserSelected, groupSelected])
+    }, [initialDate, finalDate, externalUserSelected, groupSelected, statusSelected])
+
+    React.useEffect(() => {
+        if (groupSelected !== '') {
+            handleExternalUserSelected(null)
+            filterUsersByGroup();
+        } else {
+            loadExternalUsers()
+        }
+    }, [groupSelected])
 
     return (
         <Paper className={classes.container2} elevation={3}>
             <div className={classes.container2}>
-                <h3>Relatório de vendas</h3>
+                <h3>Relatório de vendas / Relatório de agendamentos</h3>
                 <div className={classes.header}>
                     <TextField
                         className={classes.item}
@@ -309,9 +348,19 @@ export default function SalesTable() {
                         <InputLabel shrink={true}>
                             Grupo
                         </InputLabel>
-                        <Select value={groupSelected} onChange={e => handleGroupSelected(e.target.value)} native> {/**Precisa da função handle e um state de valor */}
+                        <Select value={groupSelected} onChange={e => handleGroupSelected(e.target.value)} native>
                             {
                                 usergroups.map(group => (<option key={group.id} value={group.id}>{group.name}</option>))
+                            }
+                        </Select>
+                    </FormControl>
+                    <FormControl className={classes.item}>
+                        <InputLabel shrink={true}>
+                            Status
+                        </InputLabel>
+                        <Select value={statusSelected} onChange={e => handleStatusSelected(e.target.value)} native>
+                            {
+                                statusList.map((status, key) => <option key={key} value={status}>{status}</option>)
                             }
                         </Select>
                     </FormControl>
