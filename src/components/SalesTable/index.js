@@ -423,7 +423,7 @@ export default function SalesTable() {
                     </TableBody>
                     <TableFooter>
                         <TableRow>
-                            <div style={{ width: '25em', display: 'flex', flexDirection: 'column' }}>
+                            <div style={{ width: '15em', display: 'flex', flexDirection: 'column' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
                                     <h4>Total bruto: </h4>
                                     {dataBody.totSales}
