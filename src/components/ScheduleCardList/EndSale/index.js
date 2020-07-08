@@ -175,15 +175,13 @@ function EndSale({ scheduling }) {
         })
     }
     function handleFormPaymentSelected(value) {
-
         setDataSale(prevState => {
             let dataFormPayment = [...prevState.formPayments]
-
             const newFormPayment = formPayments.find(form => form.id == value);
-            if (dataFormPayment.find(form => form.idFormPayment == newFormPayment.id)) {
+            const foundedForm = dataFormPayment.find(form => form.idFormPayment == newFormPayment.id);
+            if (foundedForm) {
                 if (dataFormPayment.length > 1) {
-                    dataFormPayment.splice(dataFormPayment.indexOf({ idFormPayment: newFormPayment.id, formPayment: [newFormPayment] }), 1)
-
+                    dataFormPayment.indexOf({ idFormPayment: newFormPayment.id })
                 } else {
                     dataFormPayment = [
                         {
@@ -197,10 +195,12 @@ function EndSale({ scheduling }) {
                         },
                     ]
                 }
-            } else {
+            } else if (dataFormPayment.length > 0) {
                 if (dataFormPayment[0].idFormPayment == "") {
                     dataFormPayment = [];
                 }
+                dataFormPayment.push({ idFormPayment: newFormPayment.id, value: 0, formPayment: [newFormPayment] })
+            } else {
                 dataFormPayment.push({ idFormPayment: newFormPayment.id, value: 0, formPayment: [newFormPayment] })
             }
             return {
@@ -241,8 +241,12 @@ function EndSale({ scheduling }) {
     async function handleSubmitSale(e) {
         e.preventDefault();
         try {
-            const resPostSale = await apiBeyond.post('/setSale', dataSale);
-            alert(resPostSale.data.message.observation)
+            if (dataSale.formPayments.length < 1 || dataSale.formPayments[0].idFormPayment == "") {
+                alert('Ao menos uma forma de pagamento deve ser selecionada')
+            }else{
+                const resPostSale = await apiBeyond.post('/setSale', dataSale);
+                alert(resPostSale.data.message.observation)
+            }
         } catch (error) {
             console.log('print de error em handleSubmitSale => ', error);
             alert('Problema ao tentar atualizar agendamento')
@@ -250,21 +254,22 @@ function EndSale({ scheduling }) {
     }
 
     function handleFormPaymentValue({ id, value }) {
-        //ao remover uma forma de pagamento o valor não está sendo atualizado
         const foundFormPayment = dataSale.formPayments.find(form => {
             return form.formPayment[0].id == id
         })
         setDataSale(prevState => {
             const data = [...prevState.formPayments];
-            data[data.indexOf(foundFormPayment)].value = value
+            if (value !== "") {
+                data[data.indexOf(foundFormPayment)].value = value
+            } else {
+                data[data.indexOf(foundFormPayment)].value = 0
+            }
             return {
                 ...prevState,
                 sale: {
                     ...dataSale.sale,
                     value: data.reduce((sum, formPayment) => {
-                        if (value !== "") {
-                            return sum + parseFloat(formPayment.value)
-                        }
+                        return sum + parseFloat(formPayment.value)
                     }, 0)
                 },
                 formPayments: data
@@ -283,7 +288,6 @@ function EndSale({ scheduling }) {
             loadDataSale()
         }
     })
-
     return (
         <form className={classes.formEndSale} onSubmit={handleSubmitSale}>
             <h5>Finalizando agendamento</h5>
@@ -310,7 +314,7 @@ function EndSale({ scheduling }) {
                         }}
                         required
                         multiple
-                        input={<Input id="select-multiple-chip" />}
+                        input={<Input required id="select-multiple-chip" />}
                         renderValue={(selected) => {
                             if (selected[0].idFormPayment == "") {
                                 return ""
