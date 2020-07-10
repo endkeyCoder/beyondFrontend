@@ -3,7 +3,7 @@ import {
     Paper, InputAdornment, TextField, Typography, Button, IconButton, ExpansionPanel, ExpansionPanelSummary,
     ExpansionPanelDetails, makeStyles
 } from '@material-ui/core';
-import { Search, Lock, LockOpen, ExpandMore, ExpandLess, Save, Edit } from '@material-ui/icons';
+import { Search, Lock, LockOpen, ExpandMore, Save, Edit, Refresh } from '@material-ui/icons';
 import apiBeyond from '../../config/apiBeyond';
 
 const useStyles = makeStyles(theme => ({
@@ -184,7 +184,12 @@ function UserEdit() {
     return (
         <Paper elevation={3}>
             <div className={classes.header}>
-                <Typography variant="h5">Edição e Bloqueio</Typography>
+                <div className={classes.containerRow}>
+                    <Typography variant="h5">Edição e Bloqueio</Typography>
+                    <IconButton>
+                        <Refresh onClick={() => setDoQuery(true)} />
+                    </IconButton>
+                </div>
                 <TextField
                     InputProps={{
                         startAdornment: (
