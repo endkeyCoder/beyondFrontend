@@ -1,17 +1,19 @@
 import React from 'react';
-import RegisterUserForm from '../../components/RegisterUserForm'
+import UserEdit from '../../components/UserEdit';
+import RegisterUserForm from '../../components/RegisterUserForm';
 import MenuBar from '../../components/MenuBar';
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     container: {
         display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-around',
         padding: '1em',
+        justifyContent: 'center',
+        flexWrap: 'wrap'
     },
     item: {
-        maxWidth: '40em'
+        width: '90%',
+        marginBottom: '1em'
     }
 }))
 
@@ -23,6 +25,9 @@ export default function RegisterUser() {
             <div className={classes.container}>
                 <section className={classes.item}>
                     <RegisterUserForm />
+                </section>
+                <section className={classes.item}>
+                    <UserEdit />
                 </section>
             </div>
         </>
