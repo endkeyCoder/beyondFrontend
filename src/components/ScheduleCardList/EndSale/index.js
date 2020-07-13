@@ -181,7 +181,9 @@ function EndSale({ scheduling }) {
             const foundedForm = dataFormPayment.find(form => form.idFormPayment == newFormPayment.id);
             if (foundedForm) {
                 if (dataFormPayment.length > 1) {
-                    dataFormPayment.indexOf({ idFormPayment: newFormPayment.id })
+                    console.log('print de foundedForm => ', foundedForm)
+                    console.log('print de dataFormPayment => ', dataFormPayment)
+                    dataFormPayment.splice(dataFormPayment.indexOf(foundedForm), 1)
                 } else {
                     dataFormPayment = [
                         {
@@ -243,7 +245,7 @@ function EndSale({ scheduling }) {
         try {
             if (dataSale.formPayments.length < 1 || dataSale.formPayments[0].idFormPayment == "") {
                 alert('Ao menos uma forma de pagamento deve ser selecionada')
-            }else{
+            } else {
                 const resPostSale = await apiBeyond.post('/setSale', dataSale);
                 alert(resPostSale.data.message.observation)
             }
@@ -288,6 +290,22 @@ function EndSale({ scheduling }) {
             loadDataSale()
         }
     })
+
+    useEffect(() => {
+        setDataSale(prevState => {
+            const data = { ...prevState }
+            const sumFormPayments = data.formPayments.reduce((sum, formPayment) => {
+                return sum + parseFloat(formPayment.value)
+            }, 0)
+            return {
+                ...data,
+                sale: {
+                    ...data.sale,
+                    value: sumFormPayments
+                }
+            }
+        })
+    }, [dataSale.formPayments])
     return (
         <form className={classes.formEndSale} onSubmit={handleSubmitSale}>
             <h5>Finalizando agendamento</h5>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext, createContext } from 'react';
 
 import {
     makeStyles, FormGroup, FormControlLabel, Switch, TextField, Paper,
@@ -72,6 +72,8 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
+const SchedulingsContext = createContext({ data: {}, setData: () => false, load: () => false });
+
 function SchedulingExpanded(props) {
     const { client, id, cod } = props;
     const classes = useStyles();
@@ -80,7 +82,7 @@ function SchedulingExpanded(props) {
     const externalUsers = useSelector(state => state.externalUsersReducer.externalUsers)
     const [openModal, setOpenModal] = useState(false);
     const crud = useSelector(state => state.userReducer.user.permissions.find(permission => permission.entity[0].name == 'schedulings'))
-
+    const [statusList, setStatusList] = useState(['pendente', 'ausente', 'cancelado', 'não localizado', 'não vendido', 'reagendar', 'recusado', 'vendido', 'conjuge ausente'])
     const handleOpenModal = () => {
         setOpenModal(!openModal)
     }
@@ -144,7 +146,7 @@ function SchedulingExpanded(props) {
                     </div>
                     <div className={classes.form}>
                         <TextField
-                            value={infoSchedulings.saleProbability || 'Problema!'}
+                            value={infoSchedulings.saleProbability}
                             label="Probabilidade de venda"
                             disabled={!editForm}
                             className={classes.item}
@@ -157,7 +159,7 @@ function SchedulingExpanded(props) {
                             required
                         />
                         <TextField
-                            value={infoSchedulings.dateScheduling || 'Problema!'}
+                            value={infoSchedulings.dateScheduling}
                             label="Data do agendamento"
                             disabled={!editForm}
                             type="date"
@@ -171,7 +173,7 @@ function SchedulingExpanded(props) {
                             required
                         />
                         <TextField
-                            value={infoSchedulings.hourScheduling || 'Problema!'}
+                            value={infoSchedulings.hourScheduling}
                             label="Hora"
                             disabled={!editForm}
                             type="time"
@@ -195,7 +197,7 @@ function SchedulingExpanded(props) {
                             required
                         />
                         <TextField
-                            value={infoSchedulings.age || 'Idade não informada corretamente!'}
+                            value={infoSchedulings.age}
                             label="Idade"
                             disabled={!editForm}
                             className={classes.item}
@@ -230,7 +232,7 @@ function SchedulingExpanded(props) {
                             className={classes.item}
                             variant="outlined"
                             margin="dense"
-                            value={infoSchedulings.spouse || 'Problema!'}
+                            value={infoSchedulings.spouse}
                             onChange={e => handleInfoScheduling('spouse', e.target.value)}
                             required
                         />
@@ -251,7 +253,7 @@ function SchedulingExpanded(props) {
                             className={classes.item}
                             variant="outlined"
                             margin="dense"
-                            value={infoSchedulings.telephone || 'Problema!'}
+                            value={infoSchedulings.telephone}
                             onChange={e => handleInfoScheduling('telephone', e.target.value)}
                             required
                         />
@@ -261,7 +263,7 @@ function SchedulingExpanded(props) {
                             className={classes.item}
                             variant="outlined"
                             margin="dense"
-                            value={infoSchedulings.cellphone || 'Problema!'}
+                            value={infoSchedulings.cellphone}
                             onChange={e => handleInfoScheduling('cellphone', e.target.value)}
                             required
                         />
@@ -272,7 +274,7 @@ function SchedulingExpanded(props) {
                             variant="outlined"
                             margin="dense"
                             multiline
-                            value={infoSchedulings.address || 'Problema!'}
+                            value={infoSchedulings.address}
                             onChange={e => handleInfoScheduling('address', e.target.value)}
                             required
                         />
@@ -282,7 +284,7 @@ function SchedulingExpanded(props) {
                             className={classes.item}
                             variant="outlined"
                             margin="dense"
-                            value={infoSchedulings.profession || 'Problema!'}
+                            value={infoSchedulings.profession}
                             onChange={e => handleInfoScheduling('profession', e.target.value)}
                             required
                         />
@@ -293,7 +295,7 @@ function SchedulingExpanded(props) {
                             variant="outlined"
                             margin="dense"
                             multiline
-                            value={infoSchedulings.referencePoint || 'Problema!'}
+                            value={infoSchedulings.referencePoint}
                             onChange={e => handleInfoScheduling('referencePoint', e.target.value)}
                             required
                         />
@@ -303,7 +305,7 @@ function SchedulingExpanded(props) {
                             className={classes.item}
                             variant="outlined"
                             margin="dense"
-                            value={infoSchedulings.linkMaps || 'Problema!'}
+                            value={infoSchedulings.linkMaps}
                             onChange={e => handleInfoScheduling('linkMaps', e.target.value)}
                             required
                         />
@@ -315,15 +317,14 @@ function SchedulingExpanded(props) {
                                 disabled={!editForm}
                                 variant="outlined"
                                 size="small"
-                                value={infoSchedulings.status || 'Problema!'}
+                                value={infoSchedulings.status}
                                 onChange={e => handleInfoScheduling('status', e.target.value)}
                                 className={classes.item}
                                 native={true}
                             >
-                                <option value="Agendado">Agendado</option>
-                                <option value="pendente">Pendente</option>
-                                <option value="vendido">Vendido</option>
-                                <option value="não vendido">Não vendido</option>
+                                {
+                                    statusList.map((value, index) => <option key={index} value={value}>{value}</option>)
+                                }
                             </Select>
                         </FormControl>
                         <Autocomplete
@@ -335,7 +336,11 @@ function SchedulingExpanded(props) {
                             disabled={!editForm}
                             className={classes.item}
                             value={externalUsers.find(user => user.id == infoSchedulings.externalUser)}
-                            onChange={(_, value) => handleInfoScheduling('externalUser', value.id)}
+                            onChange={(_, value) => {
+                                if (value !== null) {
+                                    handleInfoScheduling('externalUser', value.id)
+                                }
+                            }}
                             required
                         />
                         <TextField
@@ -368,8 +373,12 @@ function SchedulingExpanded(props) {
 
 //Modal de confirmação de exclusão
 
-function ModalDelScheduling({ open, idScheduling }) {
+function ModalDelScheduling(props) {
+    const { open, idScheduling } = props
     const { openModal, setOpenModal } = open;
+
+    const listSchedulings = useContext(SchedulingsContext);
+
     const handleClose = () => {
         setOpenModal(!openModal)
     }
@@ -377,6 +386,9 @@ function ModalDelScheduling({ open, idScheduling }) {
     const delScheduling = async () => {
         try {
             const resDelScheduling = await apiBeyond.delete(`/delScheduling/${idScheduling}`)
+            if (resDelScheduling.data.message.statusCode == 200) {
+                listSchedulings.load();
+            }
             alert(resDelScheduling.data.message.observation);
             handleClose();
         } catch (error) {
@@ -401,10 +413,10 @@ function ModalDelScheduling({ open, idScheduling }) {
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose} color="primary">
+                <Button onClick={handleClose} color="primary" variant="contained">
                     Cancelar
                 </Button>
-                <Button onClick={delScheduling} color="secondary" autoFocus>
+                <Button onClick={delScheduling} color="secondary" autoFocus variant="contained">
                     Ok, eu entendo e quero continuar.
           </Button>
             </DialogActions>
@@ -536,7 +548,11 @@ function SchedulingSelect() {
                 />
             </div>
             <div className={classes.item} >
-                {schedulings.map((scheduling, index) => <SchedulingExpanded key={scheduling.id || index} {...scheduling} />)}
+                <SchedulingsContext.Provider value={{ data: schedulings, setData: setSchedulings, load: getSchedulings }}>
+                    {schedulings.map((scheduling, index) =>
+                        <SchedulingExpanded key={scheduling.id || index} {...scheduling} />
+                    )}
+                </SchedulingsContext.Provider>
             </div>
         </Paper>
     );

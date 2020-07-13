@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import {
     Paper, InputAdornment, TextField, Typography, Button, IconButton, ExpansionPanel, ExpansionPanelSummary,
-    ExpansionPanelDetails, makeStyles
+    ExpansionPanelDetails, makeStyles, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions
 } from '@material-ui/core';
-import { Search, Lock, LockOpen, ExpandMore, Save, Edit, Refresh } from '@material-ui/icons';
+import { Search, Lock, LockOpen, ExpandMore, Save, Edit, Refresh, Delete } from '@material-ui/icons';
 import apiBeyond from '../../config/apiBeyond';
+import { useDispatch } from 'react-redux';
+import { setExternalUsers } from '../../config/redux/actions';
 
 const useStyles = makeStyles(theme => ({
     containerCol: {
@@ -29,13 +31,16 @@ const useStyles = makeStyles(theme => ({
         margin: '0.2em 0 0.3em 0',
         flex: 'auto'
     },
-
+    inputsContainer: {
+        flexWrap: 'wrap'
+    }
 }))
 
 function UserPanel(props) {
     const { id } = props.dataUser
     const [dataUser, setDataUser] = useState(props.dataUser)
     const [editing, setEditing] = useState(false);
+    const [openModal, setOpenModal] = useState(false);
 
     const handleDataUser = (nameProp, valueProp) => {
         setDataUser({
@@ -76,77 +81,85 @@ function UserPanel(props) {
         }
     }
 
+    const handleOpenModal = () => {
+        setOpenModal(!openModal)
+    }
+
     const classes = useStyles();
     return (
-        <ExpansionPanel elevation={1}>
-            <ExpansionPanelSummary className={classes.containerRow} expandIcon={<ExpandMore />}>
-                <div className={classes.containerRow}>
-                    <Typography variant="subtitle1">{dataUser.name}</Typography>
-                    <IconButton>
-                        {
-                            dataUser.block ?
-                                <Lock
-                                    onClick={blockUser}
-                                /> :
-                                <LockOpen
-                                    onClick={blockUser}
-                                />
-                        }
-                    </IconButton>
-                </div>
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails>
-                <div className={classes.containerCol}>
-                    <div className={`${classes.containerRow} ${classes.item}`}>
-                        {
-                            editing ?
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    startIcon={<Save />}
-                                    size="small"
-                                    type="submit"
-                                    onClick={putUser}
-                                >Salvar</Button> :
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    startIcon={<Edit />}
-                                    onClick={handleEditing}
-                                    size="small"
-                                >
-                                    Editar
-                            </Button>
-                        }
+        <>
+            <ExpansionPanel elevation={1}>
+                <ExpansionPanelSummary className={classes.containerRow} expandIcon={<ExpandMore />}>
+                    <div className={classes.containerRow}>
+                        <Typography variant="subtitle1">{dataUser.name}</Typography>
+                        <IconButton>
+                            {
+                                dataUser.block ?
+                                    <Lock
+                                        onClick={blockUser}
+                                    /> :
+                                    <LockOpen
+                                        onClick={blockUser}
+                                    />
+                            }
+                        </IconButton>
                     </div>
-                    <form className={`${classes.containerRow} ${classes.inputsContainer}`} onSubmit={putUser}>
-                        <TextField
-                            label="nome"
-                            InputLabelProps={{
-                                shrink: true
-                            }}
-                            value={dataUser.name}
-                            onChange={e => handleDataUser('name', e.target.value)}
-                            disabled={!editing}
-                            className={classes.item}
-                            required
-                        />
-                        <TextField
-                            label="email"
-                            InputLabelProps={{
-                                shrink: true
-                            }}
-                            value={dataUser.email}
-                            onChange={e => handleDataUser('email', e.target.value)}
-                            disabled={!editing}
-                            className={classes.item}
-                            required
-                            type="email"
-                        />
-                    </form>
-                </div>
-            </ExpansionPanelDetails>
-        </ExpansionPanel>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                    <div className={classes.containerCol}>
+                        <div className={`${classes.containerRow} ${classes.item}`}>
+                            {
+                                editing ?
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        startIcon={<Save />}
+                                        size="small"
+                                        type="submit"
+                                        onClick={putUser}
+                                    >Salvar</Button> :
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        startIcon={<Edit />}
+                                        onClick={handleEditing}
+                                        size="small"
+                                    >
+                                        Editar
+                            </Button>
+                            }
+                            <Button color="secondary" variant="contained" size="small" startIcon={<Delete />} onClick={handleOpenModal}>Excluir</Button>
+                        </div>
+                        <form className={`${classes.containerRow} ${classes.inputsContainer}`} onSubmit={putUser}>
+                            <TextField
+                                label="nome"
+                                InputLabelProps={{
+                                    shrink: true
+                                }}
+                                value={dataUser.name}
+                                onChange={e => handleDataUser('name', e.target.value)}
+                                disabled={!editing}
+                                className={classes.item}
+                                required
+                            />
+                            <TextField
+                                label="email"
+                                InputLabelProps={{
+                                    shrink: true
+                                }}
+                                value={dataUser.email}
+                                onChange={e => handleDataUser('email', e.target.value)}
+                                disabled={!editing}
+                                className={classes.item}
+                                required
+                                type="email"
+                            />
+                        </form>
+                    </div>
+                </ExpansionPanelDetails>
+            </ExpansionPanel>
+            <ModalDelUser open={{ openModal, setOpenModal }} idUser={dataUser.id} />
+        </>
     )
 }
 
@@ -207,6 +220,62 @@ function UserEdit() {
                 }
             </div>
         </Paper>
+    )
+}
+
+function ModalDelUser({ open, idUser }) {
+    const dispatch = useDispatch();
+    const { openModal, setOpenModal } = open;
+    const handleClose = () => {
+        setOpenModal(!openModal)
+    }
+
+    const delUser = async () => {
+        try {
+            const resDelUser = await apiBeyond.delete(`/delUser/${idUser}`)
+            refreshExternalUsers(); //atualiza os usuários externos de acordo com o que for excluido
+            alert(resDelUser.data.message.observation);
+            handleClose();
+        } catch (error) {
+            console.log('print de error em delUser => '.error)
+            alert('PROBLEMA AO EXCLUIR USUARIO')
+        }
+    }
+
+    const refreshExternalUsers = async () => {
+        try {
+            const resGetExternalUsers = await apiBeyond.get('/getExternalUsers');
+            dispatch(setExternalUsers(resGetExternalUsers.data.data))
+        } catch (error) {
+            console.log('print de error em refreshExternalUser => ', error)
+            alert('Problema ao tentar atualizar os usuarios externos')
+        }
+    }
+
+    return (
+        <Dialog
+            open={openModal}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+        >
+            <DialogTitle id="alert-dialog-title">Tem certeza que quer EXCLUIR o Usuário?</DialogTitle>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                    Ao excluir um usuário, todas as informações que dependem dele serão excluídas, como
+                    VENDAS, AGENDAMENTOS, RELATÓRIOS, etc ..
+                    A operação NÃO poderá ser desfeita!
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleClose} color="primary" variant="contained" autoFocus>
+                    Cancelar
+                </Button>
+                <Button onClick={delUser} color="secondary" variant="contained">
+                    Ok, eu entendo e quero continuar.
+          </Button>
+            </DialogActions>
+        </Dialog>
     )
 }
 
