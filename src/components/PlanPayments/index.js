@@ -61,6 +61,9 @@ const useStyles = makeStyles((theme) => ({
         '& button': {
             marginRight: '1%',
         }
+    },
+    marginDefault:{
+        marginBottom: '1em'
     }
 }))
 
@@ -291,7 +294,7 @@ export default function PlanPayments() {
     }
 
     return (
-        <Paper elevation={3} className={classes.containerSetting}>
+        <Paper elevation={3} className={`${classes.containerSetting} ${classes.marginDefault}`}>
             <div className={classes.headerSetting}>
                 <div style={{ display: 'flex' }}>
                     <LibraryBooks />

@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
             width: '100%',
             marginBottom: '1em'
         },
-        [theme.breakpoints.up('sm')]:{
+        [theme.breakpoints.up('sm')]: {
             marginRight: '2%'
         },
         flex: 1
@@ -60,6 +60,9 @@ const useStyles = makeStyles((theme) => ({
         '& button': {
             marginRight: '1%',
         }
+    },
+    marginDefault: {
+        marginBottom: '1em'
     }
 }))
 
@@ -260,7 +263,7 @@ export default function FormPayments() {
     const classes = useStyles();
 
     return (
-        <Paper className={classes.containerSetting} elevation={3}>
+        <Paper className={`${classes.containerSetting} ${classes.marginDefault}`} elevation={3}>
             <div className={classes.headerSetting}>
                 <div style={{ display: 'flex' }}>
                     <Payment />

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import Menu from '../../components/MenuBar';
 import CardInfoUser from '../../components/CardInfoUser';
 import ChangePassword from '../../components/ChangePassword';
+import CommissionUserList from '../../components/CommissionUserList';
 import apiBeyond from '../../config/apiBeyond';
 import { useDispatch, useSelector } from 'react-redux';
 import { setExternalUsers } from '../../config/redux/actions';
@@ -14,10 +15,10 @@ const useStyles = makeStyles(theme => ({
         flexWrap: 'wrap',
         justifyContent: 'space-evenly',
         padding: '1em',
-        [theme.breakpoints.down('sm')]:{
+        [theme.breakpoints.down('sm')]: {
             flex: 'auto'
         },
-        [theme.breakpoints.down('md')]:{
+        [theme.breakpoints.down('md')]: {
             justifyContent: 'flex-start'
         }
     },
@@ -51,6 +52,7 @@ export default function Home() {
             <section className={classes.container}>
                 <CardInfoUser />
                 <ChangePassword />
+                <CommissionUserList />
             </section>
         </>
     );

@@ -150,24 +150,6 @@ function ScheduleCard({ scheduling }) {
                                     style={{ paddingTop: '0.7em' }}
                                 />
                                 <TextField
-                                    label="Telefone"
-                                    value={scheduling.telephone}
-                                    InputProps={{
-                                        disableUnderline: true,
-                                        disabled: true
-                                    }}
-                                    size="small"
-                                />
-                                <TextField
-                                    label="Celular"
-                                    value={scheduling.cellphone}
-                                    InputProps={{
-                                        disableUnderline: true,
-                                        disabled: true
-                                    }}
-                                    size="small"
-                                />
-                                <TextField
                                     label="Profissão"
                                     value={scheduling.profession}
                                     InputProps={{

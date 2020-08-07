@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import {
     FormControl, Select, TextField, Button, FormHelperText, makeStyles,
     Chip, Input, MenuItem, List, ListItem, ListSubheader, ListItemText,
-    Collapse, Checkbox, FormControlLabel
+    Collapse, Checkbox, FormControlLabel, IconButton, ListItemIcon, Dialog, DialogTitle,
+    DialogContent, DialogContentText, withStyles
 } from '@material-ui/core';
 import { useSelector } from 'react-redux';
-import { Save, ExpandLess, ExpandMore } from '@material-ui/icons';
+import { Save, ExpandLess, ExpandMore, MonetizationOnRounded, DeleteRounded, Close } from '@material-ui/icons';
 import apiBeyond from '../../../config/apiBeyond';
 
 const useStyles = makeStyles((theme) => ({
@@ -34,8 +35,14 @@ const useStyles = makeStyles((theme) => ({
     },
     listNested: {
         paddingLeft: theme.spacing(4)
+    },
+    dialogHeader: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between'
     }
 }))
+
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -85,13 +92,66 @@ function EndSale({ scheduling }) {
                 ]
             },
         ],
-
+        products: []
     })
     const [openList, setOpenList] = useState(true)
 
     const userInfo = useSelector(state => state.userReducer.user.data)
     const [statusList, setStatusList] = useState(['pendente', 'ausente', 'cancelado', 'não localizado', 'não vendido', 'reagendar', 'recusado', 'vendido', 'conjuge ausente'])
+    const [listProducts, setListProducts] = useState([]);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [productsSelected, setProductsSelected] = useState([])
 
+    function addProductSale() {
+        setDataSale(prevState => {
+            let data = [...prevState.products];
+            let result = { ...prevState };
+            data = [];
+            productsSelected.forEach(prod => {
+                const newProduct = listProducts.find(product => prod.idProduct == product.id)
+                data.push({ idProduct: newProduct.id, value: 0, product: [newProduct] })
+            })
+            result = {
+                ...result,
+                products: data
+            }
+            return result
+        })
+    }
+
+    function handleProductsSelected(idProd) {
+        const newProd = listProducts.find(product => product.id == idProd)
+        const prodExist = productsSelected.find(prod => prod.idProduct == newProd.id)
+        if (prodExist == undefined) {
+            setProductsSelected(prevState => {
+                const data = [...prevState];
+                data.push({ idProduct: newProd.id, value: 0, product: [newProd], })
+                return data
+            })
+        } else {
+            setProductsSelected(prevState => {
+                const data = [...prevState];
+                data.splice(data.indexOf(prodExist), 1)
+                return data
+            })
+        }
+    }
+
+    function handleOpenDialog() {
+        setOpenDialog(true)
+    }
+    function handleCloseDialog() {
+        setOpenDialog(false)
+    }
+    async function loadListProducts() {
+        try {
+            const resGetProducts = await apiBeyond.get('/getAllProducts')
+            setListProducts(resGetProducts.data.data)
+        } catch (error) {
+            console.log('print de error em laodListProducts => ', error);
+            alert('Problema para carregar produtos')
+        }
+    }
     async function loadPlanPayments() {
         try {
             const resPlanPayments = await apiBeyond.get('/getAllPlanPayments');
@@ -120,6 +180,9 @@ function EndSale({ scheduling }) {
             const resDataSale = await apiBeyond.get(`/getSaleByIdScheduling/${scheduling.id}`);
             if (resDataSale.data.message.statusCode == 200) {
                 setDataSale(resDataSale.data.data)
+                if (resDataSale.data.data.products.length > 0) {
+                    setProductsSelected(resDataSale.data.data.products)
+                }
             }
         } catch (error) {
             console.log('print de error em loadDataSale => ', error);
@@ -181,8 +244,6 @@ function EndSale({ scheduling }) {
             const foundedForm = dataFormPayment.find(form => form.idFormPayment == newFormPayment.id);
             if (foundedForm) {
                 if (dataFormPayment.length > 1) {
-                    console.log('print de foundedForm => ', foundedForm)
-                    console.log('print de dataFormPayment => ', dataFormPayment)
                     dataFormPayment.splice(dataFormPayment.indexOf(foundedForm), 1)
                 } else {
                     dataFormPayment = [
@@ -255,6 +316,45 @@ function EndSale({ scheduling }) {
         }
     }
 
+    function handleRemoveItem(idProd) {
+        let foundProduct = dataSale.products.find(prod => prod.idProduct == idProd);
+        setDataSale(prevState => {
+            let data = { ...prevState };
+            let result = [...prevState.products];
+            result.splice(result.indexOf(foundProduct), 1)
+
+            data = {
+                ...data,
+                products: result
+            }
+            return data;
+        })
+        foundProduct = productsSelected.find(prod => prod.idProduct == idProd);
+        setProductsSelected(prevState => {
+            const data = [...prevState];
+            data.splice(data.indexOf(foundProduct), 1);
+            return data
+        })
+    }
+
+    function handleProductSale({ id, value }) {
+        const foundProduct = dataSale.products.find(prod => {
+            return prod.idProduct == id
+        })
+        setDataSale(prevState => {
+            const data = [...prevState.products];
+            if (value !== "") {
+                data[data.indexOf(foundProduct)].value = value;
+            } else {
+                data[data.indexOf(foundProduct)].value = 0;
+            }
+            return {
+                ...prevState,
+                products: data
+            }
+        })
+    }
+
     function handleFormPaymentValue({ id, value }) {
         const foundFormPayment = dataSale.formPayments.find(form => {
             return form.formPayment[0].id == id
@@ -289,6 +389,9 @@ function EndSale({ scheduling }) {
         if (dataSale.sale.planPaymentId == '') {
             loadDataSale()
         }
+        if (listProducts <= 0) {
+            loadListProducts()
+        }
     })
 
     useEffect(() => {
@@ -306,6 +409,8 @@ function EndSale({ scheduling }) {
             }
         })
     }, [dataSale.formPayments])
+    console.log('print de dataSale => ', dataSale)
+    console.log('print de productSelected => ', productsSelected)
     return (
         <form className={classes.formEndSale} onSubmit={handleSubmitSale}>
             <h5>Finalizando agendamento</h5>
@@ -378,6 +483,7 @@ function EndSale({ scheduling }) {
                     <FormHelperText>Plano de pagamento utilizado</FormHelperText>
                 </FormControl>
 
+                <Button onClick={handleOpenDialog} variant="contained" color="primary" style={{ width: '100%' }}>Adicionar Produtos<sup>+</sup></Button>
                 <List
                     className={classes.listRoot}
                     subheader={<ListSubheader>Valores da venda</ListSubheader>}
@@ -433,9 +539,45 @@ function EndSale({ scheduling }) {
 
                         </List>
                     </Collapse>
-
                 </List>
+                <List
+                    className={classes.listRoot}
+                    subheader={<ListSubheader>Itens da venda</ListSubheader>}
+                >
+                    <ListItem button onClick={handleShowList}>
+                        <ListItemText>Total da itens da venda: {dataSale.products.length}</ListItemText>
+                        {openList ? <ExpandLess /> : <ExpandMore />}
+                    </ListItem>
+                    <Collapse in={openList}>
+                        <List className={classes.listNested}>
+                            {
+                                dataSale.products.map(prod => {
 
+                                    if (dataSale.products.length > 0) {
+                                        return (
+                                            <ListItem key={`list-item-${prod.idProduct}`} style={{ alignItems: 'baseline' }}>
+                                                <TextField
+                                                    label={prod.product[0].title}
+                                                    placeholder="Valor do produto"
+                                                    value={prod.value}
+                                                    InputProps={{
+                                                        endAdornment: <MonetizationOnRounded />
+                                                    }}
+                                                    id={prod.idProduct}
+                                                    onChange={e => handleProductSale(e.target)}
+                                                    helperText={prod.product[0].description}
+                                                />
+                                                <IconButton id={prod.idProduct} onClick={e => handleRemoveItem(e.target.id)}>
+                                                    <DeleteRounded />
+                                                </IconButton>
+                                            </ListItem>
+                                        )
+                                    }
+                                })
+                            }
+                        </List>
+                    </Collapse>
+                </List>
                 <TextField
                     multiline
                     rowsMax={15}
@@ -451,6 +593,41 @@ function EndSale({ scheduling }) {
                     Salvar
                 </Button>
             </div>
+            <Dialog open={openDialog} onClose={handleCloseDialog}>
+                <DialogTitle id="alert-dialog-title" style={{ padding: '0 0 0 16px' }}>
+                    <div className={classes.dialogHeader}>
+                        Lista de Itens
+                    <IconButton onClick={handleCloseDialog}>
+                            <Close />
+                        </IconButton>
+                    </div>
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description" className={classes.container}>
+                        <List
+                            className={classes.listRoot}
+                        >
+                            {
+                                listProducts.map(prod => (
+                                    <ListItem key={`list-item-${prod.id}`} style={{ paddingTop: 0, paddingBottom: 0 }}>
+                                        <ListItemIcon>
+                                            <Checkbox
+                                                edge="start"
+                                                id={prod.id}
+                                                value={prod.id}
+                                                onChange={(e) => handleProductsSelected(e.target.value)}
+                                                checked={productsSelected.find(product => product.idProduct == prod.id) ? true : false}
+                                            />
+                                        </ListItemIcon>
+                                        <ListItemText primary={prod.title} />
+                                    </ListItem>
+                                ))
+                            }
+                        </List>
+                        <Button style={{ margin: '0.5em 0 0', width: '100%' }} size="small" onClick={addProductSale} variant="contained" color="primary">Incluir na venda</Button>
+                    </DialogContentText>
+                </DialogContent>
+            </Dialog>
         </form>
     );
 }
