@@ -51,7 +51,6 @@ const Routes = () => {
                 <PrivateRoute path="/generalSettings" component={GeneralSettings} />
                 <PrivateRoute path="/audit" component={Audit} />
                 <Route path="*" component={() => (<><MenuBar /><h1>404 ERROR NOT FOUND <br /> Página não encontrada</h1></>)} />
-
             </Switch>
         </BrowserRouter >
     )

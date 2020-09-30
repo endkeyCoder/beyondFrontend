@@ -89,7 +89,6 @@ TextMaskCustom.propTypes = {
 };
 
 export default function SchedulingPost() {
-
     const [probability, setProbability] = useState('');
     const [dateScheduling, setDateScheduling] = useState('');
     const [hour, setHour] = useState('');
@@ -115,7 +114,6 @@ export default function SchedulingPost() {
 
     const dataUser = useSelector(state => state.userReducer.user.data)
     const dispatch = useDispatch();
-
 
     function handleProbability(probability) {
         setProbability(probability);
@@ -204,10 +202,12 @@ export default function SchedulingPost() {
                 userId: dataUser.id,
                 externalUser: externalUsers.externalSelected.id
             })
-      
+
             if (resScheduling.data.message.statusCode == 200) {
                 dispatch(setScheduling(resScheduling.data.data))
+                schedulingFormReset()
             }
+
             alert(resScheduling.data.message.observation);
         } catch (error) {
             console.log('print de error em handleSubmitScheduling => ', error);
@@ -215,7 +215,23 @@ export default function SchedulingPost() {
         }
 
     }
-
+    function schedulingFormReset() {
+        setProbability('')
+        setDateScheduling('')
+        setHour('')
+        setCity('')
+        setClient('')
+        setAgeClient(0)
+        setSpouse('')
+        setAgeSpouse(0)
+        setTelephone('')
+        setCellphone('')
+        setAddress('')
+        setProfession('')
+        setReferencePoint('')
+        setLinkMaps('')
+        setObservation('')
+    }
     useEffect(() => {
         async function getExternalUsers() {
             try {
