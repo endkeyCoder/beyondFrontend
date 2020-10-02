@@ -167,6 +167,15 @@ function ScheduleCard({ scheduling }) {
                                     }}
                                     size="small"
                                 />
+                                <TextField
+                                    label="Celular"
+                                    value={scheduling.cellphone}
+                                    InputProps={{
+                                        disableUnderline: true,
+                                        disabled: true
+                                    }}
+                                    size="small"
+                                />
                             </div>
                         </div>
                         <TextField
