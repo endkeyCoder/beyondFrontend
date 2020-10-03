@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Beyond",
+  "name": "Sistema para gestão de agendamentos",
   "icons": [
     {
       "src": "favicon.ico",
