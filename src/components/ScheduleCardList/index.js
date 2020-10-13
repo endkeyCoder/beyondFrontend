@@ -204,6 +204,15 @@ function ScheduleCard({ scheduling }) {
                             }}
                             multiline
                         />
+                         <TextField
+                            label="Ponto de referencia"
+                            value={scheduling.referencePoint}
+                            InputProps={{
+                                disableUnderline: true,
+                                disabled: true
+                            }}
+                            multiline
+                        />
                         <a href={scheduling.linkMaps} target="_blank">
                             <TextField
                                 label="Link do google maps"
